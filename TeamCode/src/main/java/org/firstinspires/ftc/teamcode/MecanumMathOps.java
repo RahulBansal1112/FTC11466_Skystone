@@ -7,7 +7,7 @@ public class MecanumMathOps {
 
     public static double getFrontLeftMotorP(double x,double y,double r){
         return x + y + r;
-    }
+    }//this is an edit
 
     public static double getFrontRightMotorP(double x,double y,double r){
         return x - y - r;
@@ -21,7 +21,7 @@ public class MecanumMathOps {
         return x - y + r;
     }
 
-    public void accelerate(double deltaSpeed,long millseconds) {
+    public void accelerate(double deltaSpeed,long milliseconds) {
 
     }
 
