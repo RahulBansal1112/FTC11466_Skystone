@@ -21,7 +21,7 @@ public class MecanumMathOps {
         return x - y + r;
     }
 
-    public void accelerate(double deltaSpeed,long millseconds) {
+    public void accelerate(double deltaSpeed,long milliseconds) {
 
     }
 
