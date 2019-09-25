@@ -75,7 +75,7 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
-        leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_driver");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class,"right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class,"right_front_drive");
 
@@ -93,42 +93,49 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-        getRuntime();
-
-        // run until the end of the match (driver presses STOP)
 
 
+        //GO STRAIGHT RIGHT
+        sleep(3000);//theres a problem with sleep?
+        mathOps.strafeAndTurn(1,0,0);//STRAIGHT RIGHT
+        updateMotorSpeeds(mathOps);
+
+        //GO STRAIGHT LEFT
+        sleep(3000);//theres a problem with sleep?
+        mathOps.strafeAndTurn(-1,0,0);//STRAIGHT LEFT
+        updateMotorSpeeds(mathOps);
+
+        //STRAFE UP
+        sleep(3000);//theres a problem with sleep?
+        mathOps.strafeAndTurn(0,1,0);//STRAIGHT UP
+        updateMotorSpeeds(mathOps);
+
+        //STRAFE DOWN
+        sleep(3000);//theres a problem with sleep?
+        mathOps.strafeAndTurn(0,-1,0);//STRAIGHT DOWN
+        updateMotorSpeeds(mathOps);
+
+
+
+    }
+
+
+    private void updateMotorSpeeds(MecanumMathOps mathOps){
         // Setup a variable for each drive wheel to save power level for telemetry
         double leftFrontPower = mathOps.getFrontLeftMotorP();
         double rightFrontPower = mathOps.getFrontRightMotorP();
         double leftBackPower = mathOps.getBackLeftMotorP();
         double rightBackPower = mathOps.getBackRightMotorP();
 
-        // Choose to drive using either Tank Mode, or POV Mode
-        // Comment out the method that's not used.  The default below is POV.
-
-        // POV Mode uses left stick to go forward, and right stick to turn.
-        // - This uses basic math to combine motions and is easier to drive straight.
-        //double drive = -gamepad1.left_stick_y;
-        //double turn  =  gamepad1.right_stick_x;
-        //leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-        //rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
-
-        // Tank Mode uses one stick to control each wheel.
-        // - This requires no math, but it is hard to drive forward slowly and keep straight.
-        // leftPower  = -gamepad1.left_stick_y ;
-        // rightPower = -gamepad1.right_stick_y ;
-
-        // Send calculated power to wheels
         leftBackDrive.setPower(leftBackPower);
         leftFrontDrive.setPower(leftFrontPower);
         rightBackDrive.setPower(rightBackPower);
         rightFrontDrive.setPower(rightFrontPower);
+
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Motors", "left back(%.2f), left front (%.2f)" +
                 "right back(%.2f), right front(%.2f)", leftBackPower, leftFrontPower, rightBackPower, rightFrontPower);
         telemetry.update();
-
     }
 }

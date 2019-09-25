@@ -28,6 +28,9 @@ public class MecanumMathOps {
         return this.brPower * this.speed;
     }
 
+    public double getSpeed(){
+        return this.speed;
+    }
     public void accelerateLinearly(double deltaSpeed,long milliseconds) {//change in power multiplier (-1,1)
         //Make sure that after the acceleration we don't go over the speed of 1, we may want to change the way rather than
         //changing the step speed, we change the amount of time the acceleration takes palce
