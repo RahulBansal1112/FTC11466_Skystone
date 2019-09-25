@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 public class MecanumMathOps {
-    //
+    //See if we can make all the methods static?
     private double speed = 1.0;
     private double accelerationPerMilli = 0;
     private long timeAccelerating = 0;
