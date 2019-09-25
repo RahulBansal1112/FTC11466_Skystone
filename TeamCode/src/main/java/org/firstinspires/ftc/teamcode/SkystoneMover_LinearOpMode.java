@@ -52,13 +52,14 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
-@Disabled
 public class SkystoneMover_LinearOpMode extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftDrive = null;
-    private DcMotor rightDrive = null;
+    private DcMotor leftFrontDrive;
+    private DcMotor rightFrontDrive;
+    private DcMotor leftBackDrive;
+    private DcMotor rightBackDrive;
 
     @Override
     public void runOpMode() {
@@ -68,13 +69,16 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
-        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+        leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_driver");
+        rightFrontDrive = hardwareMap.get(DcMotor.class,"right_front_drive");
+        rightBackDrive = hardwareMap.get(DcMotor.class,"right_front_drive");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        leftDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightDrive.setDirection(DcMotor.Direction.REVERSE);
+        /** REVERSE MOTOR DIRECTION HERE*/
+        //leftDrive.setDirection(DcMotor.Direction.FORWARD);
+        //rightDrive.setDirection(DcMotor.Direction.REVERSE);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -103,9 +107,10 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
             // rightPower = -gamepad1.right_stick_y ;
 
             // Send calculated power to wheels
-            leftDrive.setPower(leftPower);
-            rightDrive.setPower(rightPower);
-
+            leftBackDrive.setPower(leftPower);
+            leftFrontDrive.setPower(rightPower);
+            rightBackDrive.setPower(1.0);
+            rightFrontDrive.setPower(1.0);
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);

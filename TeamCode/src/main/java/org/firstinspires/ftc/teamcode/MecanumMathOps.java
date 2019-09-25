@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 public class MecanumMathOps {
     //
-    private double speed = 0;
+    private double speed = 1.0;
+    private double accelerationPerMilli = 0;
+    private long timeAccelerating = 0;
     //
     private double flPower = 0;
     private double frPower = 0;
@@ -26,8 +28,15 @@ public class MecanumMathOps {
         return this.brPower;
     }
 
-    public void accelerate(double deltaSpeed,long milliseconds) {
+    public void accelerate(double deltaSpeed,long milliseconds) {//change in power multiplier (-1,1)
         //to be implemented
+        if (this.speed + deltaSpeed > 1.0) {
+            deltaSpeed = 1.0-this.speed;
+        } else if (this.speed + delta)
+        this.accelerationPerMilli = deltaSpeed/milliseconds;
+        this.timeAccelerating = milliseconds;
+
+
     }
 
     public void strafeAndTurn(double x,double y,double r){
@@ -36,7 +45,8 @@ public class MecanumMathOps {
         this.blPower = x - y + r;
         this.brPower = x + y + r;
     }
-    public void update(long dt) {
+    public void update(long dt) {//dt is in milliseconds
+        this.speed =
 
     }
 
