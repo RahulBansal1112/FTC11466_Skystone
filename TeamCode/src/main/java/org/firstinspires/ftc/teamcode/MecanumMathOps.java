@@ -12,19 +12,19 @@ public class MecanumMathOps {
     private double brPower = 0;
 
 
-    public double getFrontLeftMotorP(double x,double y,double r){
+    public double getFrontLeftMotorP(){
         return this.flPower * this.speed;
     }//this is an edit
 
-    public double getFrontRightMotorP(double x,double y,double r){
+    public double getFrontRightMotorP(){
         return this.frPower * this.speed;
     }
 
-    public double getBackLeftMotorP(double x,double y,double r){
+    public double getBackLeftMotorP(){
         return this.blPower * this.speed;
     }
 
-    public double getBackRightMotorP(double x,double y,double r){
+    public double getBackRightMotorP(){
         return this.brPower * this.speed;
     }
 
