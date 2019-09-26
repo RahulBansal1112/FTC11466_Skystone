@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -63,6 +64,10 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        //Make instance of MathOps class
+
+        MecanumMathOps mathOps = new MecanumMathOps();
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -70,13 +75,18 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
-        leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_driver");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class,"right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class,"right_front_drive");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         /** REVERSE MOTOR DIRECTION HERE*/
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         //leftDrive.setDirection(DcMotor.Direction.FORWARD);
         //rightDrive.setDirection(DcMotor.Direction.REVERSE);
 
@@ -84,37 +94,48 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-        // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
 
-            // Setup a variable for each drive wheel to save power level for telemetry
-            double leftPower;
-            double rightPower;
+        //GO STRAIGHT RIGHT
+        sleep(3000);//theres a problem with sleep?
+        mathOps.strafeAndTurn(1,0,0);//STRAIGHT RIGHT
+        updateMotorSpeeds(mathOps);
 
-            // Choose to drive using either Tank Mode, or POV Mode
-            // Comment out the method that's not used.  The default below is POV.
+        //GO STRAIGHT LEFT
+        sleep(3000);//theres a problem with sleep?
+        mathOps.strafeAndTurn(-1,0,0);//STRAIGHT LEFT
+        updateMotorSpeeds(mathOps);
 
-            // POV Mode uses left stick to go forward, and right stick to turn.
-            // - This uses basic math to combine motions and is easier to drive straight.
-            double drive = -gamepad1.left_stick_y;
-            double turn  =  gamepad1.right_stick_x;
-            leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-            rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
+        //STRAFE UP
+        sleep(3000);//theres a problem with sleep?
+        mathOps.strafeAndTurn(0,1,0);//STRAIGHT UP
+        updateMotorSpeeds(mathOps);
 
-            // Tank Mode uses one stick to control each wheel.
-            // - This requires no math, but it is hard to drive forward slowly and keep straight.
-            // leftPower  = -gamepad1.left_stick_y ;
-            // rightPower = -gamepad1.right_stick_y ;
+        //STRAFE DOWN
+        sleep(3000);//theres a problem with sleep?
+        mathOps.strafeAndTurn(0,-1,0);//STRAIGHT DOWN
+        updateMotorSpeeds(mathOps);
 
-            // Send calculated power to wheels
-            leftBackDrive.setPower(leftPower);
-            leftFrontDrive.setPower(rightPower);
-            rightBackDrive.setPower(1.0);
-            rightFrontDrive.setPower(1.0);
-            // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
-            telemetry.update();
-        }
+
+
+    }
+
+
+    private void updateMotorSpeeds(MecanumMathOps mathOps){
+        // Setup a variable for each drive wheel to save power level for telemetry
+        double leftFrontPower = mathOps.getFrontLeftMotorP();
+        double rightFrontPower = mathOps.getFrontRightMotorP();
+        double leftBackPower = mathOps.getBackLeftMotorP();
+        double rightBackPower = mathOps.getBackRightMotorP();
+
+        leftBackDrive.setPower(leftBackPower);
+        leftFrontDrive.setPower(leftFrontPower);
+        rightBackDrive.setPower(rightBackPower);
+        rightFrontDrive.setPower(rightFrontPower);
+
+        // Show the elapsed game time and wheel power.
+        telemetry.addData("Status", "Run Time: " + runtime.toString());
+        telemetry.addData("Motors", "left back(%.2f), left front (%.2f)" +
+                "right back(%.2f), right front(%.2f)", leftBackPower, leftFrontPower, rightBackPower, rightFrontPower);
+        telemetry.update();
     }
 }
