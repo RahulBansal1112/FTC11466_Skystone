@@ -52,7 +52,7 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
+@TeleOp(name="SkystoneMover_LinearOpMode", group="Linear Opmode")
 public class SkystoneMover_LinearOpMode extends LinearOpMode {
 
     // Declare OpMode members.
@@ -66,7 +66,7 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
     public void runOpMode() {
         //Make instance of MathOps class
 
-        MecanumMathOps mathOps = new MecanumMathOps();
+        MecanumMathOps mathOps = new MecanumMathOps(leftFrontDrive,leftBackDrive,rightFrontDrive,rightBackDrive);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -81,14 +81,11 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        /** REVERSE MOTOR DIRECTION HERE*/
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
 
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        //leftDrive.setDirection(DcMotor.Direction.FORWARD);
-        //rightDrive.setDirection(DcMotor.Direction.REVERSE);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -96,22 +93,22 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
 
 
         //GO STRAIGHT RIGHT
-        sleep(3000);//theres a problem with sleep?
+        sleep(3000);//there's a problem with sleep?
         mathOps.strafeAndTurn(1,0,0);//STRAIGHT RIGHT
         updateMotorSpeeds(mathOps);
 
         //GO STRAIGHT LEFT
-        sleep(3000);//theres a problem with sleep?
+        sleep(3000);//there's a problem with sleep?
         mathOps.strafeAndTurn(-1,0,0);//STRAIGHT LEFT
         updateMotorSpeeds(mathOps);
 
         //STRAFE UP
-        sleep(3000);//theres a problem with sleep?
+        sleep(3000);//there's a problem with sleep?
         mathOps.strafeAndTurn(0,1,0);//STRAIGHT UP
         updateMotorSpeeds(mathOps);
 
         //STRAFE DOWN
-        sleep(3000);//theres a problem with sleep?
+        sleep(3000);//there's a problem with sleep?
         mathOps.strafeAndTurn(0,-1,0);//STRAIGHT DOWN
         updateMotorSpeeds(mathOps);
 
