@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -56,8 +57,16 @@ public class OneController_Iterative extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftDrive = null;
-    private DcMotor rightDrive = null;
+    private DcMotor leftFrontDrive;
+    private DcMotor rightFrontDrive;
+    private DcMotor leftBackDrive;
+    private DcMotor rightBackDrive;
+    private DcMotor liftMotor;
+    private Servo innerPincher;
+    private Servo outerPincher;
+
+    private MecanumMathOps mathOps;
+    //initialize clamp + stuff
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -69,13 +78,19 @@ public class OneController_Iterative extends OpMode
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
-        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+        leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
+        rightBackDrive = hardwareMap.get(DcMotor.class,"right_back_drive");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        leftDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        mathOps = new MecanumMathOps(leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -86,6 +101,9 @@ public class OneController_Iterative extends OpMode
      */
     @Override
     public void init_loop() {
+
+        //pass
+
     }
 
     /*
@@ -102,18 +120,24 @@ public class OneController_Iterative extends OpMode
     @Override
     public void loop() {
         // Setup a variable for each drive wheel to save power level for telemetry
-        double leftPower;
-        double rightPower;
+        double leftFrontPower;
+        double rightFrontPower;
+        double leftBackPower;
+        double rightBackPower;
+
+        mathOps.strafeAndTurn(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+
+
 
         // Choose to drive using either Tank Mode, or POV Mode
         // Comment out the method that's not used.  The default below is POV.
 
         // POV Mode uses left stick to go forward, and right stick to turn.
         // - This uses basic math to combine motions and is easier to drive straight.
-        double drive = -gamepad1.left_stick_y;
-        double turn  =  gamepad1.right_stick_x;
-        leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-        rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
+        //double drive = -gamepad1.left_stick_y;
+        //double turn  =  gamepad1.right_stick_x;
+        //leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
+        //rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
 
         // Tank Mode uses one stick to control each wheel.
         // - This requires no math, but it is hard to drive forward slowly and keep straight.
@@ -121,12 +145,15 @@ public class OneController_Iterative extends OpMode
         // rightPower = -gamepad1.right_stick_y ;
 
         // Send calculated power to wheels
-        leftDrive.setPower(leftPower);
-        rightDrive.setPower(rightPower);
+        //leftDrive.setPower(leftPower);
+        //rightDrive.setPower(rightPower);
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+        //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+
+        mathOps.update(5); //change this value
+
     }
 
     /*
@@ -134,6 +161,25 @@ public class OneController_Iterative extends OpMode
      */
     @Override
     public void stop() {
+    }
+
+    private boolean getClamp() {
+        return gamepad1.right_bumper;
+    }
+    private boolean getPincherOpen() {
+        return gamepad1.a;
+    }
+    private boolean getPincherInner() {
+        return gamepad1.left_bumper;
+    }
+    private boolean getPincherOuter() {
+        return gamepad1.b; //placeholder
+    }
+    private boolean moveLiftUp() {
+        return gamepad1.dpad_up;
+    }
+    private boolean moveLiftDown() {
+        return gamepad1.dpad_down;
     }
 
 }
