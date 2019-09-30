@@ -11,7 +11,6 @@ public class MecanumMathOps {
     private double blPower = 0;
     private double brPower = 0;
 
-
     public double getFrontLeftMotorP(){
         return this.flPower * this.speed;
     }//this is an edit
@@ -42,7 +41,6 @@ public class MecanumMathOps {
         this.accelerationPerMilli = deltaSpeed/milliseconds;
         this.timeAccelerating = milliseconds;
 
-
     }
 
     public void strafeAndTurn(double x,double y,double r){
@@ -61,7 +59,5 @@ public class MecanumMathOps {
         this.speed += this.accelerationPerMilli * dt;
 
     }
-
-
 
 }
