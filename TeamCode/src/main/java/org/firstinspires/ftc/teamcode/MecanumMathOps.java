@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.Range;
 
 public class MecanumMathOps {
     //See if we can make all the methods static (probably not)?
@@ -20,6 +21,11 @@ public class MecanumMathOps {
     private double frPower = 0;
     private double blPower = 0;
     private double brPower = 0;
+
+    private double pFlPower = 0;
+    private double pFrPower = 0;
+    private double pBlPower = 0;
+    private double pBrPower = 0;
 
     public MecanumMathOps(DcMotor leftFront,DcMotor leftBack,DcMotor rightFront,DcMotor rightBack){
         this.leftFrontDrive = leftFront;
@@ -52,13 +58,13 @@ public class MecanumMathOps {
         return this.speed;
     }
 
-    public void moveIndefinitely(){//move without a designated stop time
+    public void moveIndefinitely(){//move without a designated stop time update so it's intuitive
         this.moveForTime(10000000);//technically a bad solution, but it works
     }
 
     public void moveForTime(long milliseconds){
         this.timeMoving = milliseconds;
-    }
+    }//update so it's intuitive
 
     public boolean isAccelerating(){
         return this.timeAccelerating > 0;
@@ -85,7 +91,7 @@ public class MecanumMathOps {
         this.brPower = x + y - r;
     }
 
-    public void update(long dt) {//dt is in milliseconds not needed for first test
+    public void update(long dt) {//dt is in milliseconds not needed for first test update this method so it's intuitive
         this.timeAccelerating -= dt;
         if(this.timeAccelerating < 0){
             this.timeAccelerating = 0;//technically not needed, but may be useful for telemetry purposes
@@ -97,16 +103,27 @@ public class MecanumMathOps {
         this.timeMoving -= dt;
         if (this.timeMoving < 0){
             this.timeMoving = 0;
-        } else {
-
         }
     }
 
-    public void updatePowers(){
+    public void updatePowers(){//perhaps implement auto acceleration
         this.rightFrontDrive.setPower(this.getFrontRightMotorP());
         this.rightBackDrive.setPower(this.getFrontRightMotorP());
         this.leftBackDrive.setPower(this.getBackLeftMotorP());
         this.leftFrontDrive.setPower(this.getFrontLeftMotorP());
+
+    }
+
+    public void updatePowersSmoothly(long dt,double maxPowerChangePerMilli){//implements auto acceleration
+        this.pFlPower = Range.clip(this.pFlPower + Range.clip(this.flPower-pFlPower,-maxPowerChangePerMilli * dt,maxPowerChangePerMilli*dt),-1,1);
+        this.pFrPower = Range.clip(this.pFrPower + Range.clip(this.frPower-pFrPower,-maxPowerChangePerMilli*dt,maxPowerChangePerMilli*dt),-1,1);
+        this.pBlPower = Range.clip(this.pBlPower + Range.clip(this.blPower-pBlPower,-maxPowerChangePerMilli*dt,maxPowerChangePerMilli*dt),-1,1);
+        this.pBrPower = Range.clip(this.pBrPower + Range.clip(this.brPower-pBrPower,-maxPowerChangePerMilli*dt,maxPowerChangePerMilli*dt),-1,1);
+
+        this.rightFrontDrive.setPower(this.pFrPower);
+        this.leftFrontDrive.setPower(this.pFlPower);
+        this.rightBackDrive.setPower(this.pBrPower);
+        this.leftBackDrive.setPower(this.pBlPower);
     }
 
 
