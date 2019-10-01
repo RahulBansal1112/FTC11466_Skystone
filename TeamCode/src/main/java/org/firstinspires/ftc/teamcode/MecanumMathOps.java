@@ -1,15 +1,32 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+
 public class MecanumMathOps {
-    //See if we can make all the methods static?
+    //See if we can make all the methods static (probably not)?
     private double speed = 1.0;
     private double accelerationPerMilli = 0;
     private long timeAccelerating = 0;
-    //
+    private long timeMoving = 0;
+    //motors
+    private DcMotor leftFrontDrive;
+    private DcMotor rightFrontDrive;
+    private DcMotor leftBackDrive;
+    private DcMotor rightBackDrive;
+    //powers
     private double flPower = 0;
     private double frPower = 0;
     private double blPower = 0;
     private double brPower = 0;
+
+
+
+    public MecanumMathOps(DcMotor leftFront,DcMotor leftBack,DcMotor rightFront,DcMotor rightBack){
+        this.leftFrontDrive = leftFront;
+        this.leftBackDrive  = leftBack;
+        this.rightBackDrive = rightBack;
+        this.rightFrontDrive = rightFront;
+    }
 
     public double getFrontLeftMotorP(){
         return this.flPower * this.speed;
@@ -27,9 +44,27 @@ public class MecanumMathOps {
         return this.brPower * this.speed;
     }
 
+    public void setSpeed(double speed){
+        this.speed = speed;
+    }
+
     public double getSpeed(){
         return this.speed;
     }
+
+    public void moveIndefinitely(){//move without a designated stop time
+        this.moveForTime(10000000);//technically a bad solution, but it works
+
+    }
+
+    public void moveForTime(long milliseconds){
+        this.timeMoving = milliseconds;
+    }
+
+    public boolean isAccelerating(){
+        return this.timeAccelerating > 0;
+    }
+
     public void accelerateLinearly(double deltaSpeed,long milliseconds) {//change in power multiplier (-1,1)
         //Make sure that after the acceleration we don't go over the speed of 1, we may want to change the way rather than
         //changing the step speed, we change the amount of time the acceleration takes palce
@@ -40,6 +75,7 @@ public class MecanumMathOps {
         }
         this.accelerationPerMilli = deltaSpeed/milliseconds;
         this.timeAccelerating = milliseconds;
+        this.timeMoving = Math.max(this.timeMoving,timeAccelerating);
 
     }
 
@@ -58,6 +94,16 @@ public class MecanumMathOps {
         }
         this.speed += this.accelerationPerMilli * dt;
 
-    }
+        //if still moving
+        this.timeMoving -= dt;
+        if (this.timeMoving < 0){
+            this.timeMoving = 0;
+        } else {
+            this.rightFrontDrive.setPower(this.getFrontRightMotorP());
+            this.rightBackDrive.setPower(this.getFrontRightMotorP());
+            this.leftBackDrive.setPower(this.getBackLeftMotorP());
+            this.leftFrontDrive.setPower(this.getFrontLeftMotorP());
+        }
+        }
 
 }
