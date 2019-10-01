@@ -54,7 +54,6 @@ public class MecanumMathOps {
 
     public void moveIndefinitely(){//move without a designated stop time
         this.moveForTime(10000000);//technically a bad solution, but it works
-
     }
 
     public void moveForTime(long milliseconds){
@@ -77,17 +76,16 @@ public class MecanumMathOps {
         this.timeAccelerating = milliseconds;
         this.timeMoving = Math.max(this.timeMoving,timeAccelerating);
 
-
     }
 
     public void strafeAndTurn(double x,double y,double r){
         this.flPower = x + y + r;
         this.frPower = x - y - r;
         this.blPower = x - y + r;
-        this.brPower = x + y + r;
+        this.brPower = x + y - r;
     }
 
-    public void update(long dt) {//dt is in milliseconds
+    public void update(long dt) {//dt is in milliseconds not needed for first test
         this.timeAccelerating -= dt;
         if(this.timeAccelerating < 0){
             this.timeAccelerating = 0;//technically not needed, but may be useful for telemetry purposes
@@ -100,12 +98,16 @@ public class MecanumMathOps {
         if (this.timeMoving < 0){
             this.timeMoving = 0;
         } else {
-            this.rightFrontDrive.setPower(this.getFrontRightMotorP());
-            this.rightBackDrive.setPower(this.getFrontRightMotorP());
-            this.leftBackDrive.setPower(this.getBackLeftMotorP());
-            this.leftFrontDrive.setPower(this.getFrontLeftMotorP());
+
         }
-        }
+    }
+
+    public void updatePowers(){
+        this.rightFrontDrive.setPower(this.getFrontRightMotorP());
+        this.rightBackDrive.setPower(this.getFrontRightMotorP());
+        this.leftBackDrive.setPower(this.getBackLeftMotorP());
+        this.leftFrontDrive.setPower(this.getFrontLeftMotorP());
+    }
 
 
 

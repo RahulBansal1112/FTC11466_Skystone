@@ -119,13 +119,32 @@ public class OneController_Iterative extends OpMode
      */
     @Override
     public void loop() {
-        // Setup a variable for each drive wheel to save power level for telemetry
-        double leftFrontPower;
-        double rightFrontPower;
-        double leftBackPower;
-        double rightBackPower;
 
         mathOps.strafeAndTurn(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+        if (this.getClamp()){
+            if (this.innerPincher.getPosition() < 45)//OPen?
+                this.innerPincher.setPosition(90);//closed?
+            else//closed?
+                this.innerPincher.setPosition(0);//open
+        }
+        if (this.getPincherInner()){
+            if (this.innerPincher.getPosition() <45)//Open?
+                this.innerPincher.setPosition(90);//CLOSED?
+            else//CLOSE?
+                this.innerPincher.setPosition(0);//OPEN?
+        }
+        if (this.getPincherOuterOpen()){
+            outerPincher.setPosition(0);//OPEN?
+        }
+        if (this.getPincherOuterClose()){
+            outerPincher.setPosition(90);//CLOSED?
+        }
+        if(this.moveLiftUp()){
+            liftMotor.setTargetPosition(liftMotor.getCurrentPosition() - 1);
+        }
+        if(this.moveLiftDown()){
+            liftMotor.setTargetPosition(liftMotor.getCurrentPosition() + 1);//see what this means
+        }
 
 
 
@@ -152,7 +171,8 @@ public class OneController_Iterative extends OpMode
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
 
-        mathOps.update(5); //change this value
+        //mathOps.update(5); //change this value
+        mathOps.updatePowers();
 
     }
 
@@ -166,14 +186,14 @@ public class OneController_Iterative extends OpMode
     private boolean getClamp() {
         return gamepad1.right_bumper;
     }
-    private boolean getPincherOpen() {
+    private boolean getPincherOuterOpen() {
         return gamepad1.a;
+    }
+    private boolean getPincherOuterClose() {
+        return gamepad1.b; //placeholder
     }
     private boolean getPincherInner() {
         return gamepad1.left_bumper;
-    }
-    private boolean getPincherOuter() {
-        return gamepad1.b; //placeholder
     }
     private boolean moveLiftUp() {
         return gamepad1.dpad_up;
