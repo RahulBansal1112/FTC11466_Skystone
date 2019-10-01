@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class MecanumMathOps {
@@ -8,6 +9,7 @@ public class MecanumMathOps {
     private double accelerationPerMilli = 0;
     private long timeAccelerating = 0;
     private long timeMoving = 0;
+
     //motors
     private DcMotor leftFrontDrive;
     private DcMotor rightFrontDrive;
@@ -23,9 +25,9 @@ public class MecanumMathOps {
 
     public MecanumMathOps(DcMotor leftFront,DcMotor leftBack,DcMotor rightFront,DcMotor rightBack){
         this.leftFrontDrive = leftFront;
+        this.rightFrontDrive = rightFront;
         this.leftBackDrive  = leftBack;
         this.rightBackDrive = rightBack;
-        this.rightFrontDrive = rightFront;
     }
 
     public double getFrontLeftMotorP(){
