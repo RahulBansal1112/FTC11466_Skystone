@@ -90,8 +90,15 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-
-
+        
+        //plans for autonomous:
+        //get to a stone
+        //pick it up
+        //move both robot and stone to building zone
+        //go back
+        //repeat
+        //specifics later
+        
         //GO STRAIGHT RIGHT
         sleep(3000);//there's a problem with sleep?
         mathOps.strafeAndTurn(1,0,0);//STRAIGHT RIGHT
