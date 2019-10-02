@@ -2,13 +2,18 @@ package org.firstinspires.ftc.teamcode;
 
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 public class MecanumMathOps {
+    private final int ENCODER_TICKS_PER_INCH = 200;
+
     //See if we can make all the methods static (probably not)?
     private double speed = 1.0;
     private double accelerationPerMilli = 0;
     private long timeAccelerating = 0;
     private long timeMoving = 0;
+
 
     //motors
     private DcMotor leftFrontDrive;
@@ -21,7 +26,10 @@ public class MecanumMathOps {
     private double blPower = 0;
     private double brPower = 0;
 
-
+    private double pFlPower = 0;
+    private double pFrPower = 0;
+    private double pBlPower = 0;
+    private double pBrPower = 0;
 
     public MecanumMathOps(DcMotor leftFront,DcMotor leftBack,DcMotor rightFront,DcMotor rightBack){
         this.leftFrontDrive = leftFront;
@@ -54,14 +62,13 @@ public class MecanumMathOps {
         return this.speed;
     }
 
-    public void moveIndefinitely(){//move without a designated stop time
+    public void moveIndefinitely(){//move without a designated stop time update so it's intuitive
         this.moveForTime(10000000);//technically a bad solution, but it works
-
     }
 
     public void moveForTime(long milliseconds){
         this.timeMoving = milliseconds;
-    }
+    }//update so it's intuitive
 
     public boolean isAccelerating(){
         return this.timeAccelerating > 0;
@@ -85,10 +92,11 @@ public class MecanumMathOps {
         this.flPower = x + y + r;
         this.frPower = x - y - r;
         this.blPower = x - y + r;
-        this.brPower = x + y + r;
+        this.brPower = x + y - r;
     }
 
-    public void update(long dt) {//dt is in milliseconds
+    /*
+    public void update(long dt) {//dt is in milliseconds not needed for first test update this method so it's intuitive
         this.timeAccelerating -= dt;
         if(this.timeAccelerating < 0){
             this.timeAccelerating = 0;//technically not needed, but may be useful for telemetry purposes
@@ -100,12 +108,69 @@ public class MecanumMathOps {
         this.timeMoving -= dt;
         if (this.timeMoving < 0){
             this.timeMoving = 0;
-        } else {
-            this.rightFrontDrive.setPower(this.getFrontRightMotorP());
-            this.rightBackDrive.setPower(this.getFrontRightMotorP());
-            this.leftBackDrive.setPower(this.getBackLeftMotorP());
-            this.leftFrontDrive.setPower(this.getFrontLeftMotorP());
         }
+    }
+    */
+
+    public void moveForAWhile(long milli, double x, double y, double r, double maxAccelerationPerMilli){
+        ElapsedTime runTime = new ElapsedTime();
+        runTime.reset();
+        //Might be inside while loop
+        this.strafeAndTurn(x, y, r);
+        while(runTime.milliseconds() < milli){
+            this.updatePowersSmoothly(5, maxAccelerationPerMilli);
         }
+
+    }
+
+    public void moveInches(double inches, double x, double y){
+
+        //Let all motors run using encoder to get ticks
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+        //Set target position(going straight) to the motors
+        //Not sure if it will work correctly. Check later
+        leftFrontDrive.setTargetPosition((int)(leftFrontDrive.getCurrentPosition() + ENCODER_TICKS_PER_INCH * inches));
+        leftBackDrive.setTargetPosition((int)(leftBackDrive.getCurrentPosition() + ENCODER_TICKS_PER_INCH * inches));
+        rightFrontDrive.setTargetPosition((int)(rightFrontDrive.getCurrentPosition() + ENCODER_TICKS_PER_INCH * inches));
+        rightBackDrive.setTargetPosition((int)(rightBackDrive.getCurrentPosition() + ENCODER_TICKS_PER_INCH * inches));
+
+        //Reset back to original state
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //Make sure to check later
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public void turnDegrees(double r){
+
+    }
+
+
+    public void updatePowers(){//perhaps implement auto acceleration
+        this.rightFrontDrive.setPower(this.getFrontRightMotorP());
+        this.rightBackDrive.setPower(this.getFrontRightMotorP());
+        this.leftBackDrive.setPower(this.getBackLeftMotorP());
+        this.leftFrontDrive.setPower(this.getFrontLeftMotorP());
+
+    }
+
+    public void updatePowersSmoothly(long dt,double maxPowerChangePerMilli){//implements auto acceleration
+        this.pFlPower = Range.clip(this.pFlPower + Range.clip(this.flPower-pFlPower,-maxPowerChangePerMilli * dt,maxPowerChangePerMilli*dt),-1,1);
+        this.pFrPower = Range.clip(this.pFrPower + Range.clip(this.frPower-pFrPower,-maxPowerChangePerMilli*dt,maxPowerChangePerMilli*dt),-1,1);
+        this.pBlPower = Range.clip(this.pBlPower + Range.clip(this.blPower-pBlPower,-maxPowerChangePerMilli*dt,maxPowerChangePerMilli*dt),-1,1);
+        this.pBrPower = Range.clip(this.pBrPower + Range.clip(this.brPower-pBrPower,-maxPowerChangePerMilli*dt,maxPowerChangePerMilli*dt),-1,1);
+
+        this.rightFrontDrive.setPower(this.pFrPower);
+        this.leftFrontDrive.setPower(this.pFlPower);
+        this.rightBackDrive.setPower(this.pBrPower);
+        this.leftBackDrive.setPower(this.pBlPower);
+    }
+
+
 
 }
