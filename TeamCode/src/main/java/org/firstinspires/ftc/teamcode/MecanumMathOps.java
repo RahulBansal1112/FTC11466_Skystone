@@ -75,7 +75,7 @@ public class MecanumMathOps {
     }
 
     public void accelerateLinearly(double deltaSpeed,long milliseconds) {//change in power multiplier (-1,1)
-        //Make sure that after the acceleration we don't go over the speed of 1, we may want to change the way rather than
+        //Make sure that after the acceleration we don't goc over the speed of 1, we may want to change the way rather than
         //changing the step speed, we change the amount of time the acceleration takes palce
         if (this.speed + deltaSpeed > 1.0) {
             deltaSpeed = 1.0-this.speed;
