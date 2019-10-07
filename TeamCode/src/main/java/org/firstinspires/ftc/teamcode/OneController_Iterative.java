@@ -121,7 +121,7 @@ public class OneController_Iterative extends OpMode
     public void loop() {
 
         mathOps.strafeAndTurn(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
-        if (this.getClamp()){
+        /*if (this.getClamp()){
             if (this.innerPincher.getPosition() < 45)//OPen?
                 this.innerPincher.setPosition(90);//closed?
             else//closed?
@@ -144,7 +144,7 @@ public class OneController_Iterative extends OpMode
         }
         if(this.moveLiftDown()){
             liftMotor.setTargetPosition(liftMotor.getCurrentPosition() + 1);//see what this means
-        }
+        } todo add this to the config file*/
 
 
 
