@@ -153,7 +153,7 @@ public class MecanumMathOps {
 
     public void updatePowers(){//perhaps implement auto acceleration
         this.rightFrontDrive.setPower(this.getFrontRightMotorP());
-        this.rightBackDrive.setPower(this.getFrontRightMotorP());
+        this.rightBackDrive.setPower(this.getBackRightMotorP());
         this.leftBackDrive.setPower(this.getBackLeftMotorP());
         this.leftFrontDrive.setPower(this.getFrontLeftMotorP());
 

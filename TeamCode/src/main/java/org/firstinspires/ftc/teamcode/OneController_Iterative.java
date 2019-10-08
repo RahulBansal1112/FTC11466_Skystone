@@ -86,9 +86,9 @@ public class OneController_Iterative extends OpMode
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
 
         mathOps = new MecanumMathOps(leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive);
@@ -121,7 +121,7 @@ public class OneController_Iterative extends OpMode
     @Override
     public void loop() {
 
-        mathOps.strafeAndTurn(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
+        mathOps.strafeAndTurn(gamepad1.left_stick_x,-gamepad1.left_stick_y, gamepad1.right_stick_x/3);
         /*if (this.getClamp()){
             if (this.innerPincher.getPosition() < 45)//OPen?
                 this.innerPincher.setPosition(90);//closed?
@@ -173,7 +173,7 @@ public class OneController_Iterative extends OpMode
         //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
 
         //mathOps.update(5); //change this value
-        mathOps.updatePowers();
+        mathOps.updatePowersSmoothly(100,0.001);
 
     }
 
