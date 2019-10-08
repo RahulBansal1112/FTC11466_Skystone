@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -52,7 +53,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="Basic: Iterative OpMode", group="Iterative Opmode")
-@Disabled
+
 public class OneController_Iterative extends OpMode
 {
     // Declare OpMode members.
@@ -120,7 +121,7 @@ public class OneController_Iterative extends OpMode
     @Override
     public void loop() {
 
-        mathOps.strafeAndTurn(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+        mathOps.strafeAndTurn(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
         /*if (this.getClamp()){
             if (this.innerPincher.getPosition() < 45)//OPen?
                 this.innerPincher.setPosition(90);//closed?
@@ -168,7 +169,7 @@ public class OneController_Iterative extends OpMode
         //rightDrive.setPower(rightPower);
 
         // Show the elapsed game time and wheel power.
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
+        telemetry.addData("Status", "Run Time: " + runtime.toString()+ " " + gamepad1.left_stick_x + " " + gamepad1.left_stick_y);
         //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
 
         //mathOps.update(5); //change this value
