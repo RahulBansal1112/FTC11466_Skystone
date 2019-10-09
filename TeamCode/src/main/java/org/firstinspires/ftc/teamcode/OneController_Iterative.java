@@ -173,7 +173,7 @@ public class OneController_Iterative extends OpMode
         //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
 
         //mathOps.update(5); //change this value
-        mathOps.updatePowersSmoothly(100,0.001);
+        mathOps.updatePowersSmoothly(16,0.001);
 
     }
 
