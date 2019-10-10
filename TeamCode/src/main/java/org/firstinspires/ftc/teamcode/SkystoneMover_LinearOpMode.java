@@ -31,7 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -52,7 +52,7 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="SkystoneMover_LinearOpMode", group="Linear Opmode")
+@Autonomous(name="SkystoneMover_LinearOpMode", group="Linear Opmode")
 public class SkystoneMover_LinearOpMode extends LinearOpMode {
 
     // Declare OpMode members.
@@ -66,7 +66,7 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
     public void runOpMode() {
         //Make instance of MathOps class
 
-        MecanumMathOps mathOps = new MecanumMathOps(leftFrontDrive,leftBackDrive,rightFrontDrive,rightBackDrive);
+        MecanumMathOps mathOps = new MecanumMathOps(leftFrontDrive,leftBackDrive,rightFrontDrive,rightBackDrive,telemetry);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();

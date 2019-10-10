@@ -52,7 +52,7 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic: Iterative OpMode", group="Iterative Opmode")
+@TeleOp(name="OneController_Iterative", group="Iterative Opmode")
 
 public class OneController_Iterative extends OpMode
 {
@@ -86,12 +86,14 @@ public class OneController_Iterative extends OpMode
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
+
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
 
-        mathOps = new MecanumMathOps(leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive);
+
+        mathOps = new MecanumMathOps(leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive,telemetry);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -121,7 +123,7 @@ public class OneController_Iterative extends OpMode
     @Override
     public void loop() {
 
-        mathOps.strafeAndTurn(gamepad1.left_stick_x,-gamepad1.left_stick_y, gamepad1.right_stick_x/3);
+        mathOps.strafeAndTurn(gamepad1.left_stick_x,-gamepad1.left_stick_y, gamepad1.right_stick_x);
         /*if (this.getClamp()){
             if (this.innerPincher.getPosition() < 45)//OPen?
                 this.innerPincher.setPosition(90);//closed?
@@ -170,10 +172,14 @@ public class OneController_Iterative extends OpMode
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString()+ " " + gamepad1.left_stick_x + " " + gamepad1.left_stick_y);
-        //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+        telemetry.addData("Motors Turning", "turn(%.2f)", gamepad1.right_stick_x);
+        telemetry.addData("Raw Motor Power",
+                "lf(%.2f) rf(%.2f) lb(%.2f) rb(%.2f)",
+                mathOps.getFrontLeftMotorP(), mathOps.getFrontRightMotorP(), mathOps.getBackLeftMotorP(),
+                mathOps.getBackRightMotorP());
 
-        //mathOps.update(5); //change this value
-        mathOps.updatePowersSmoothly(16,0.001);
+        mathOps.updatePowers();
+        //mathOps.updatePowersSmoothly(16,0.001);
 
     }
 
