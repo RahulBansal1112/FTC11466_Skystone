@@ -86,10 +86,6 @@ public class OneController_Iterative extends OpMode
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
 
         mathOps = new MecanumMathOps(leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive);
 

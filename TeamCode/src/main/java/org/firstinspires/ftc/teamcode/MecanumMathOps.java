@@ -36,6 +36,12 @@ public class MecanumMathOps {
         this.rightFrontDrive = rightFront;
         this.leftBackDrive  = leftBack;
         this.rightBackDrive = rightBack;
+
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+
     }
 
     public double getFrontLeftMotorP(){
@@ -117,8 +123,11 @@ public class MecanumMathOps {
         runTime.reset();
         //Might be inside while loop
         this.strafeAndTurn(x, y, r);
+        long prevTime = 0;
+
         while(runTime.milliseconds() < milli){
-            this.updatePowersSmoothly(5, maxAccelerationPerMilli);
+            this.updatePowersSmoothly((long) runTime.milliseconds() -prevTime, maxAccelerationPerMilli);
+            prevTime = (long) runTime.milliseconds();
         }
 
     }
@@ -138,6 +147,13 @@ public class MecanumMathOps {
         leftBackDrive.setTargetPosition((int)(leftBackDrive.getCurrentPosition() + ENCODER_TICKS_PER_INCH * inches));
         rightFrontDrive.setTargetPosition((int)(rightFrontDrive.getCurrentPosition() + ENCODER_TICKS_PER_INCH * inches));
         rightBackDrive.setTargetPosition((int)(rightBackDrive.getCurrentPosition() + ENCODER_TICKS_PER_INCH * inches));
+
+
+        while (leftBackDrive.getCurrentPosition() < leftBackDrive.getTargetPosition() ||
+                leftBackDrive.getCurrentPosition() < leftBackDrive.getTargetPosition() ||
+                leftBackDrive.getCurrentPosition() < leftBackDrive.getTargetPosition() ||
+                leftBackDrive.getCurrentPosition() < leftBackDrive.getTargetPosition()){
+        }
 
         //Reset back to original state
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //Make sure to check later

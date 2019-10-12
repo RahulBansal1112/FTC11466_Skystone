@@ -66,7 +66,6 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
     public void runOpMode() {
         //Make instance of MathOps class
 
-        MecanumMathOps mathOps = new MecanumMathOps(leftFrontDrive,leftBackDrive,rightFrontDrive,rightBackDrive);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -79,13 +78,7 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class,"right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class,"right_front_drive");
 
-        // Most robots need the motor on one side to be reversed to drive forward
-        // Reverse the motor that runs backwards when connected directly to the battery
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
-
-        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        MecanumMathOps mathOps = new MecanumMathOps(leftFrontDrive,leftBackDrive,rightFrontDrive,rightBackDrive);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -101,7 +94,7 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         
         //GO STRAIGHT RIGHT
         sleep(3000);//there's a problem with sleep?
-        mathOps.strafeAndTurn(1,0,0);//STRAIGHT RIGHT
+        mathOps.moveForAWhile(3000,1,0,0,0.001);//STRAIGHT RIGHT
         updateMotorSpeeds(mathOps);
 
         //GO STRAIGHT LEFT
