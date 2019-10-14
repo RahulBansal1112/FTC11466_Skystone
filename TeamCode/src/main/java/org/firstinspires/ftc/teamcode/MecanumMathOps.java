@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class MecanumMathOps {
     private final int ENCODER_TICKS_PER_INCH = 200;
 
@@ -14,8 +16,10 @@ public class MecanumMathOps {
     private long timeAccelerating = 0;
     private long timeMoving = 0;
 
-
+    //telemetry
+    private Telemetry telemetry;
     //motors
+
     private DcMotor leftFrontDrive;
     private DcMotor rightFrontDrive;
     private DcMotor leftBackDrive;
@@ -31,33 +35,34 @@ public class MecanumMathOps {
     private double pBlPower = 0;
     private double pBrPower = 0;
 
-    public MecanumMathOps(DcMotor leftFront,DcMotor leftBack,DcMotor rightFront,DcMotor rightBack){
+    public MecanumMathOps(DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack, Telemetry telemetry){
         this.leftFrontDrive = leftFront;
         this.rightFrontDrive = rightFront;
         this.leftBackDrive  = leftBack;
         this.rightBackDrive = rightBack;
+        this.telemetry = telemetry;
 
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
 
     }
 
     public double getFrontLeftMotorP(){
-        return this.flPower * this.speed;
+        return this.flPower;// * this.speed;
     }//this is an edit
 
     public double getFrontRightMotorP(){
-        return this.frPower * this.speed;
+        return this.frPower;// * this.speed;
     }
 
     public double getBackLeftMotorP(){
-        return this.blPower * this.speed;
+        return this.blPower;// * this.speed;
     }
 
     public double getBackRightMotorP(){
-        return this.brPower * this.speed;
+        return this.brPower;// * this.speed;
     }
 
     public void setSpeed(double speed){
@@ -96,9 +101,29 @@ public class MecanumMathOps {
 
     public void strafeAndTurn(double x,double y,double r){
         this.flPower = x + y + r;
-        this.frPower = x - y - r;
-        this.blPower = x - y + r;
+        this.frPower = - x + y - r;
+        this.blPower = - x + y + r;
         this.brPower = x + y - r;
+
+        double scalar = maxAbsValue(this.flPower, this.frPower, this.blPower, this.brPower);
+
+        if (scalar > 1) {
+            this.flPower /= scalar;
+            this.frPower /= scalar;
+            this.blPower /= scalar;
+            this.brPower /= scalar;
+        }
+    }
+
+    private double maxAbsValue(double a, double b, double c, double  d){
+
+        double a1 = Math.abs(a);
+        double b1 = Math.abs(b);
+        double c1 = Math.abs(c);
+        double d1 = Math.abs(d);
+
+        return (Math.max(Math.max(a1, b1), Math.max(c1, d1)));
+
     }
 
     /*
@@ -123,11 +148,8 @@ public class MecanumMathOps {
         runTime.reset();
         //Might be inside while loop
         this.strafeAndTurn(x, y, r);
-        long prevTime = 0;
-
         while(runTime.milliseconds() < milli){
-            this.updatePowersSmoothly((long) runTime.milliseconds() -prevTime, maxAccelerationPerMilli);
-            prevTime = (long) runTime.milliseconds();
+            this.updatePowersSmoothly(5, maxAccelerationPerMilli);
         }
 
     }
@@ -147,13 +169,6 @@ public class MecanumMathOps {
         leftBackDrive.setTargetPosition((int)(leftBackDrive.getCurrentPosition() + ENCODER_TICKS_PER_INCH * inches));
         rightFrontDrive.setTargetPosition((int)(rightFrontDrive.getCurrentPosition() + ENCODER_TICKS_PER_INCH * inches));
         rightBackDrive.setTargetPosition((int)(rightBackDrive.getCurrentPosition() + ENCODER_TICKS_PER_INCH * inches));
-
-
-        while (leftBackDrive.getCurrentPosition() < leftBackDrive.getTargetPosition() ||
-                leftBackDrive.getCurrentPosition() < leftBackDrive.getTargetPosition() ||
-                leftBackDrive.getCurrentPosition() < leftBackDrive.getTargetPosition() ||
-                leftBackDrive.getCurrentPosition() < leftBackDrive.getTargetPosition()){
-        }
 
         //Reset back to original state
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //Make sure to check later

@@ -31,7 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -52,7 +52,7 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="SkystoneMover_LinearOpMode", group="Linear Opmode")
+@Autonomous(name="SkystoneMover_LinearOpMode", group="Linear Opmode")
 public class SkystoneMover_LinearOpMode extends LinearOpMode {
 
     // Declare OpMode members.
@@ -66,6 +66,7 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
     public void runOpMode() {
         //Make instance of MathOps class
 
+        MecanumMathOps mathOps = new MecanumMathOps(leftFrontDrive,leftBackDrive,rightFrontDrive,rightBackDrive,telemetry);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -78,9 +79,7 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class,"right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class,"right_front_drive");
 
-        MecanumMathOps mathOps = new MecanumMathOps(leftFrontDrive,leftBackDrive,rightFrontDrive,rightBackDrive);
 
-        // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
         
@@ -94,7 +93,7 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         
         //GO STRAIGHT RIGHT
         sleep(3000);//there's a problem with sleep?
-        mathOps.moveForAWhile(3000,1,0,0,0.001);//STRAIGHT RIGHT
+        mathOps.strafeAndTurn(1,0,0);//STRAIGHT RIGHT
         updateMotorSpeeds(mathOps);
 
         //GO STRAIGHT LEFT
