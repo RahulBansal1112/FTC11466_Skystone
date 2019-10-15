@@ -154,7 +154,13 @@ public class MecanumMathOps {
 
     }
 
-    public void moveInches(double inches, double x, double y){
+    public void moveInches(double inches, double x, double y){ //broken!! fix later!!
+
+        //Reset encoders
+        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //Let all motors run using encoder to get ticks
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -170,11 +176,28 @@ public class MecanumMathOps {
         rightFrontDrive.setTargetPosition((int)(rightFrontDrive.getCurrentPosition() + ENCODER_TICKS_PER_INCH * inches));
         rightBackDrive.setTargetPosition((int)(rightBackDrive.getCurrentPosition() + ENCODER_TICKS_PER_INCH * inches));
 
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        this.flPower = 1;
+        this.frPower = 1;
+        this.blPower = 1;
+        this.brPower = 1;
+
+        while(leftFrontDrive.isBusy() && leftBackDrive.isBusy() && rightFrontDrive.isBusy() && rightBackDrive.isBusy());
         //Reset back to original state
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //Make sure to check later
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        this.flPower = 0;
+        this.frPower = 0;
+        this.blPower = 0;
+        this.brPower = 0;
+
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER); //Make sure to check later
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void turnDegrees(double r){
@@ -191,6 +214,7 @@ public class MecanumMathOps {
     }
 
     public void updatePowersSmoothly(long dt,double maxPowerChangePerMilli){//implements auto acceleration
+
         this.pFlPower = Range.clip(this.pFlPower + Range.clip(this.flPower-pFlPower,-maxPowerChangePerMilli * dt,maxPowerChangePerMilli*dt),-1,1);
         this.pFrPower = Range.clip(this.pFrPower + Range.clip(this.frPower-pFrPower,-maxPowerChangePerMilli*dt,maxPowerChangePerMilli*dt),-1,1);
         this.pBlPower = Range.clip(this.pBlPower + Range.clip(this.blPower-pBlPower,-maxPowerChangePerMilli*dt,maxPowerChangePerMilli*dt),-1,1);
