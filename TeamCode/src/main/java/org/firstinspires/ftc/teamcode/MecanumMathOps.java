@@ -8,7 +8,8 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class MecanumMathOps {
-    private final int ENCODER_TICKS_PER_INCH = 200;
+    private final int ENCODER_TICKS_PER_INCH = (int) (288/(2.6 * 4 * Math.PI));
+    ;
 
     //See if we can make all the methods static (probably not)?
     private double speed = 1.0;
@@ -170,7 +171,14 @@ public class MecanumMathOps {
         rightFrontDrive.setTargetPosition((int)(rightFrontDrive.getCurrentPosition() + ENCODER_TICKS_PER_INCH * inches));
         rightBackDrive.setTargetPosition((int)(rightBackDrive.getCurrentPosition() + ENCODER_TICKS_PER_INCH * inches));
 
-        //Reset back to original state
+
+        while (leftFrontDrive.getCurrentPosition() < leftFrontDrive.getTargetPosition() ||
+                rightBackDrive.getCurrentPosition() < rightBackDrive.getTargetPosition() ||
+                rightFrontDrive.getCurrentPosition() < rightFrontDrive.getTargetPosition() ||
+                leftBackDrive.getCurrentPosition() < leftBackDrive.getTargetPosition()){
+            telemetry.
+        }
+                //Reset back to original state
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //Make sure to check later
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
