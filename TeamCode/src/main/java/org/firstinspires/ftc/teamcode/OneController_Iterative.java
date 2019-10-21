@@ -176,7 +176,7 @@ public class OneController_Iterative extends OpMode
 
         //mathOps.updatePowers();) {
         mathOps.updatePowersSmoothly(16,0.005);
-        
+
 
     }
 
