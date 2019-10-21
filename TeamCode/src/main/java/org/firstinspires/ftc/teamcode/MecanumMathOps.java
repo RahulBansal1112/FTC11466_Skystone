@@ -175,10 +175,12 @@ public class MecanumMathOps {
         while (leftFrontDrive.getCurrentPosition() < leftFrontDrive.getTargetPosition() ||
                 rightBackDrive.getCurrentPosition() < rightBackDrive.getTargetPosition() ||
                 rightFrontDrive.getCurrentPosition() < rightFrontDrive.getTargetPosition() ||
-                leftBackDrive.getCurrentPosition() < leftBackDrive.getTargetPosition()){
-            telemetry.
+                leftBackDrive.getCurrentPosition() < leftBackDrive.getTargetPosition()) {
+            telemetry.addData("Motors", "left back(%.2f), left front (%.2f)" +
+                    "right back(%.2f), right front(%.2f)", this.blPower, this.flPower, this.brPower, this.frPower);
         }
-                //Reset back to original state
+        
+        //Reset back to original state
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //Make sure to check later
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
