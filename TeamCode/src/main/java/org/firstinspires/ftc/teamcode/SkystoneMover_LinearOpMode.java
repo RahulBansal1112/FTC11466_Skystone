@@ -92,15 +92,16 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         //repeat
         //specifics later
 
-        //mathOps.moveInches(3, 0, 0);
+        mathOps.moveInches(3, 1, 0);
+        telemetry.update();
 
         //GO STRAIGHT RIGHT
-        sleep(3000);//there's a problem with sleep?
-        mathOps.strafeAndTurn(1,0,0);//STRAIGHT RIGHT
-        updateMotorSpeeds(mathOps);
+        //sleep(3000);//there's a problem with sleep?
+        //mathOps.strafeAndTurn(1,0,0);//STRAIGHT RIGHT
+        //updateMotorSpeeds(mathOps);
 
         //GO STRAIGHT LEFT
-        sleep(3000);//there's a problem with sleep?
+        /*sleep(3000);//there's a problem with sleep?
         mathOps.strafeAndTurn(-1,0,0);//STRAIGHT LEFT
         updateMotorSpeeds(mathOps);
 
@@ -112,7 +113,7 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         //STRAFE DOWN
         sleep(3000);//there's a problem with sleep?
         mathOps.strafeAndTurn(0,-1,0);//STRAIGHT DOWN
-        updateMotorSpeeds(mathOps);
+        updateMotorSpeeds(mathOps);*/
 
 
 

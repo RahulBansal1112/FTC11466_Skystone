@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class MecanumMathOps {
-    private final int ENCODER_TICKS_PER_INCH = (int) (288/(2.6 * 4 * Math.PI));
+    private final int ENCODER_TICKS_PER_INCH = (int) (288./(2.6 * 4 * Math.PI));
     ;
 
     //See if we can make all the methods static (probably not)?
@@ -156,6 +156,7 @@ public class MecanumMathOps {
     }
 
     public void moveInches(double inches, double x, double y){
+        telemetry.addData("MOVEINCHES","started");
 
         //Let all motors run using encoder to get ticks
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -164,6 +165,8 @@ public class MecanumMathOps {
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
+        this.strafeAndTurn(x,y,0);
+
         //Set target position(going straight) to the motors
         //Not sure if it will work correctly. Check later
         leftFrontDrive.setTargetPosition((int)(leftFrontDrive.getCurrentPosition() + ENCODER_TICKS_PER_INCH * inches));
@@ -171,15 +174,16 @@ public class MecanumMathOps {
         rightFrontDrive.setTargetPosition((int)(rightFrontDrive.getCurrentPosition() + ENCODER_TICKS_PER_INCH * inches));
         rightBackDrive.setTargetPosition((int)(rightBackDrive.getCurrentPosition() + ENCODER_TICKS_PER_INCH * inches));
 
-
         while (leftFrontDrive.getCurrentPosition() < leftFrontDrive.getTargetPosition() ||
                 rightBackDrive.getCurrentPosition() < rightBackDrive.getTargetPosition() ||
                 rightFrontDrive.getCurrentPosition() < rightFrontDrive.getTargetPosition() ||
                 leftBackDrive.getCurrentPosition() < leftBackDrive.getTargetPosition()) {
             telemetry.addData("Motors", "left back(%.2f), left front (%.2f)" +
                     "right back(%.2f), right front(%.2f)", this.blPower, this.flPower, this.brPower, this.frPower);
+
         }
-        
+        telemetry.addData("MOVEINCHES","ended");
+
         //Reset back to original state
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //Make sure to check later
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

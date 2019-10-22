@@ -175,7 +175,7 @@ public class OneController_Iterative extends OpMode
                 mathOps.getBackRightMotorP());
 
         //mathOps.updatePowers();) {
-        mathOps.updatePowersSmoothly(16,0.005);
+        mathOps.updatePowersSmoothly(16,0.001);
 
 
     }
