@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -36,12 +37,30 @@ public class MecanumMathOps {
     private double pBlPower = 0;
     private double pBrPower = 0;
 
+    private SkystoneMover_LinearOpMode mover;
+
+    public MecanumMathOps(SkystoneMover_LinearOpMode mover, DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack, Telemetry telemetry){
+        this.leftFrontDrive = leftFront;
+        this.rightFrontDrive = rightFront;
+        this.leftBackDrive  = leftBack;
+        this.rightBackDrive = rightBack;
+        this.telemetry = telemetry;
+        this.mover = mover;
+
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+
+    }
+
     public MecanumMathOps(DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack, Telemetry telemetry){
         this.leftFrontDrive = leftFront;
         this.rightFrontDrive = rightFront;
         this.leftBackDrive  = leftBack;
         this.rightBackDrive = rightBack;
         this.telemetry = telemetry;
+
 
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -158,15 +177,6 @@ public class MecanumMathOps {
     public void moveInches(double inches, double x, double y){
         telemetry.addData("MOVEINCHES","started");
 
-        //Let all motors run using encoder to get ticks
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
-        this.strafeAndTurn(x,y,0);
-
         //Set target position(going straight) to the motors
         //Not sure if it will work correctly. Check later
         leftFrontDrive.setTargetPosition((int)(leftFrontDrive.getCurrentPosition() + ENCODER_TICKS_PER_INCH * inches));
@@ -174,14 +184,36 @@ public class MecanumMathOps {
         rightFrontDrive.setTargetPosition((int)(rightFrontDrive.getCurrentPosition() + ENCODER_TICKS_PER_INCH * inches));
         rightBackDrive.setTargetPosition((int)(rightBackDrive.getCurrentPosition() + ENCODER_TICKS_PER_INCH * inches));
 
-        while (leftFrontDrive.getCurrentPosition() < leftFrontDrive.getTargetPosition() ||
-                rightBackDrive.getCurrentPosition() < rightBackDrive.getTargetPosition() ||
-                rightFrontDrive.getCurrentPosition() < rightFrontDrive.getTargetPosition() ||
-                leftBackDrive.getCurrentPosition() < leftBackDrive.getTargetPosition()) {
+        //Let all motors run using encoder to get ticks
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+        //this.strafeAndTurn(x,y,0);
+        //this.updatePowers();
+
+        while(leftFrontDrive.isBusy() && mover.opModeIsActive()) {
             telemetry.addData("Motors", "left back(%.2f), left front (%.2f)" +
-                    "right back(%.2f), right front(%.2f)", this.blPower, this.flPower, this.brPower, this.frPower);
+                "right back(%.2f), right front(%.2f)", this.blPower, this.flPower, this.brPower, this.frPower);
+        }
+    /*
+        while (leftFrontDrive.getCurrentPosition() != leftFrontDrive.getTargetPosition() ||
+                rightBackDrive.getCurrentPosition() != rightBackDrive.getTargetPosition() ||
+                rightFrontDrive.getCurrentPosition() != rightFrontDrive.getTargetPosition() ||
+                leftBackDrive.getCurrentPosition() !=
+                        leftBackDrive.getTargetPosition()) {
+            //telemetry.addData("motors","left: " + leftBackDrive.getCurrentPosition() + " "
+            //telemetry.addData("Motors", "left back(%.2f), left front (%.2f)" +
+            //    "right back(%.2f), right front(%.2f)", this.blPower, this.flPower, this.brPower, this.frPower);
 
         }
+        */
+
+        strafeAndTurn(0, 0, 0);
+        this.updatePowers();
+
         telemetry.addData("MOVEINCHES","ended");
 
         //Reset back to original state

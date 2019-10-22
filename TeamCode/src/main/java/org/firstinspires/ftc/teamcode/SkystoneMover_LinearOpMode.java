@@ -79,7 +79,7 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class,"right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class,"right_back_drive");
 
-        MecanumMathOps mathOps = new MecanumMathOps(leftFrontDrive,leftBackDrive,rightFrontDrive,rightBackDrive,telemetry);
+        MecanumMathOps mathOps = new MecanumMathOps(this, leftFrontDrive,leftBackDrive,rightFrontDrive,rightBackDrive,telemetry);
 
         waitForStart();
         runtime.reset();
