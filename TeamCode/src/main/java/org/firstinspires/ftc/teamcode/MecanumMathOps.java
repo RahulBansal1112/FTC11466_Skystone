@@ -90,7 +90,7 @@ public class MecanumMathOps {
         //changing the step speed, we change the amount of time the acceleration takes palce
         if (this.speed + deltaSpeed > 1.0) {
             deltaSpeed = 1.0-this.speed;
-        } else if (this.speed + deltaSpeed <0){//perhaps we make it so minimum of speed is -1? Investigate this later
+x        } else if (this.speed + deltaSpeed <0){//perhaps we make it so minimum of speed is -1? Investigate this later
             deltaSpeed = this.speed;// check these two later
         }
         this.accelerationPerMilli = deltaSpeed/milliseconds;
