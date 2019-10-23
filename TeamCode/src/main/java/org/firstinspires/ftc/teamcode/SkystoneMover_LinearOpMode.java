@@ -63,10 +63,10 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
     private DcMotor rightBackDrive;
 
     @Override
+
+
     public void runOpMode() {
         //Make instance of MathOps class
-
-        MecanumMathOps mathOps = new MecanumMathOps(leftFrontDrive,leftBackDrive,rightFrontDrive,rightBackDrive,telemetry);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -77,8 +77,9 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
         leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class,"right_front_drive");
-        rightBackDrive = hardwareMap.get(DcMotor.class,"right_front_drive");
+        rightBackDrive = hardwareMap.get(DcMotor.class,"right_back_drive");
 
+        MecanumMathOps mathOps = new MecanumMathOps(this, leftFrontDrive,leftBackDrive,rightFrontDrive,rightBackDrive,telemetry);
 
         waitForStart();
         runtime.reset();
@@ -90,14 +91,17 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         //go back
         //repeat
         //specifics later
-        
+
+        mathOps.moveInches(3, 1, 0);
+        telemetry.update();
+
         //GO STRAIGHT RIGHT
-        sleep(3000);//there's a problem with sleep?
-        mathOps.strafeAndTurn(1,0,0);//STRAIGHT RIGHT
-        updateMotorSpeeds(mathOps);
+        //sleep(3000);//there's a problem with sleep?
+        //mathOps.strafeAndTurn(1,0,0);//STRAIGHT RIGHT
+        //updateMotorSpeeds(mathOps);
 
         //GO STRAIGHT LEFT
-        sleep(3000);//there's a problem with sleep?
+        /*sleep(3000);//there's a problem with sleep?
         mathOps.strafeAndTurn(-1,0,0);//STRAIGHT LEFT
         updateMotorSpeeds(mathOps);
 
@@ -109,7 +113,7 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         //STRAFE DOWN
         sleep(3000);//there's a problem with sleep?
         mathOps.strafeAndTurn(0,-1,0);//STRAIGHT DOWN
-        updateMotorSpeeds(mathOps);
+        updateMotorSpeeds(mathOps);*/
 
 
 

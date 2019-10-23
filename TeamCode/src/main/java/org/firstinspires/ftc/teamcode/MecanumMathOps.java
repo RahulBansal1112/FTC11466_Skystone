@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -8,7 +9,8 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class MecanumMathOps {
-    private final int ENCODER_TICKS_PER_INCH = 200;
+    private final int ENCODER_TICKS_PER_INCH = (int) (288./(2.6 * 4 * Math.PI));
+    ;
 
     //See if we can make all the methods static (probably not)?
     private double speed = 1.0;
@@ -35,12 +37,30 @@ public class MecanumMathOps {
     private double pBlPower = 0;
     private double pBrPower = 0;
 
+    private SkystoneMover_LinearOpMode mover;
+
+    public MecanumMathOps(SkystoneMover_LinearOpMode mover, DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack, Telemetry telemetry){
+        this.leftFrontDrive = leftFront;
+        this.rightFrontDrive = rightFront;
+        this.leftBackDrive  = leftBack;
+        this.rightBackDrive = rightBack;
+        this.telemetry = telemetry;
+        this.mover = mover;
+
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+
+    }
+
     public MecanumMathOps(DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack, Telemetry telemetry){
         this.leftFrontDrive = leftFront;
         this.rightFrontDrive = rightFront;
         this.leftBackDrive  = leftBack;
         this.rightBackDrive = rightBack;
         this.telemetry = telemetry;
+
 
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -155,13 +175,7 @@ x        } else if (this.speed + deltaSpeed <0){//perhaps we make it so minimum 
     }
 
     public void moveInches(double inches, double x, double y){
-
-        //Let all motors run using encoder to get ticks
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+        telemetry.addData("MOVEINCHES","started");
 
         //Set target position(going straight) to the motors
         //Not sure if it will work correctly. Check later
@@ -169,6 +183,38 @@ x        } else if (this.speed + deltaSpeed <0){//perhaps we make it so minimum 
         leftBackDrive.setTargetPosition((int)(leftBackDrive.getCurrentPosition() + ENCODER_TICKS_PER_INCH * inches));
         rightFrontDrive.setTargetPosition((int)(rightFrontDrive.getCurrentPosition() + ENCODER_TICKS_PER_INCH * inches));
         rightBackDrive.setTargetPosition((int)(rightBackDrive.getCurrentPosition() + ENCODER_TICKS_PER_INCH * inches));
+
+        //Let all motors run using encoder to get ticks
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+        //this.strafeAndTurn(x,y,0);
+        //this.updatePowers();
+
+        while(leftFrontDrive.isBusy() && mover.opModeIsActive()) {
+            telemetry.addData("Motors", "left back(%.2f), left front (%.2f)" +
+                "right back(%.2f), right front(%.2f)", this.blPower, this.flPower, this.brPower, this.frPower);
+        }
+    /*
+        while (leftFrontDrive.getCurrentPosition() != leftFrontDrive.getTargetPosition() ||
+                rightBackDrive.getCurrentPosition() != rightBackDrive.getTargetPosition() ||
+                rightFrontDrive.getCurrentPosition() != rightFrontDrive.getTargetPosition() ||
+                leftBackDrive.getCurrentPosition() !=
+                        leftBackDrive.getTargetPosition()) {
+            //telemetry.addData("motors","left: " + leftBackDrive.getCurrentPosition() + " "
+            //telemetry.addData("Motors", "left back(%.2f), left front (%.2f)" +
+            //    "right back(%.2f), right front(%.2f)", this.blPower, this.flPower, this.brPower, this.frPower);
+
+        }
+        */
+
+        strafeAndTurn(0, 0, 0);
+        this.updatePowers();
+
+        telemetry.addData("MOVEINCHES","ended");
 
         //Reset back to original state
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //Make sure to check later
