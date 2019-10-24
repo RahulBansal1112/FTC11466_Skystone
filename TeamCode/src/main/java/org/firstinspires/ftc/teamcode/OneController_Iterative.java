@@ -65,6 +65,8 @@ public class OneController_Iterative extends OpMode
     private DcMotor liftMotor;
     private Servo innerPincher;
     private Servo outerPincher;
+    private Servo clamper1;
+    private Servo clamper2;
 
     private MecanumMathOps mathOps;
     //initialize clamp + stuff
@@ -84,10 +86,16 @@ public class OneController_Iterative extends OpMode
         leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class,"right_back_drive");
 
+        liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
+
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
 
+        clamper1 = hardwareMap.get(Servo.class, "clamper1");
+        clamper2 = hardwareMap.get(Servo.class, "clamper2");
 
+        innerPincher = hardwareMap.get(Servo.class, "innerPincher");
+        outerPincher = hardwareMap.get(Servo.class, "outerPincher");
 
         mathOps = new MecanumMathOps(leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive,telemetry);
 
@@ -120,31 +128,47 @@ public class OneController_Iterative extends OpMode
     public void loop() {
 
         mathOps.strafeAndTurn(gamepad1.left_stick_x,-gamepad1.left_stick_y, gamepad1.right_stick_x);
-        /*if (this.getClamp()){
-            if (this.innerPincher.getPosition() < 45)//OPen?
-                this.innerPincher.setPosition(90);//closed?
-            else//closed?
-                this.innerPincher.setPosition(0);//open
+        // If the user presses the right bumper and any of the clamps are outside the chassis, bring
+        // back in or else push them back out
+        // We might need to put an empty while loop while its moving towards the destination
+        if (this.getClamp()){
+            if (this.clamper1.getPosition() < 90 && this.clamper2.getPosition() < 90) {//OPen?
+                this.clamper1.setPosition(180);//closed?
+                this.clamper2.setPosition(180);
+            }
+            else {//closed?
+                this.clamper1.setPosition(0);//open
+                this.clamper2.setPosition(0);
+            }
         }
+
+        // If the user preses the left bumper and the inner pincher is not half way turned, push it
+        // out to grab the stone, otherwise release the stone
+        // We might need to put an empty while loop while its moving towards the destination
         if (this.getPincherInner()){
             if (this.innerPincher.getPosition() <45)//Open?
                 this.innerPincher.setPosition(90);//CLOSED?
             else//CLOSE?
                 this.innerPincher.setPosition(0);//OPEN?
         }
+        // If the user presses 'A', the pincher mechanism expands outside the chassis
+        // If the user presses 'B', the pincher mechanism will come back to the chassis
+        // We might need to put an empty while loop while its moving towards the destination
         if (this.getPincherOuterOpen()){
             outerPincher.setPosition(0);//OPEN?
         }
         if (this.getPincherOuterClose()){
             outerPincher.setPosition(90);//CLOSED?
         }
+        /*
+        // The last two if-statements won't work because we have to set the run mode
         if(this.moveLiftUp()){
             liftMotor.setTargetPosition(liftMotor.getCurrentPosition() - 1);
         }
         if(this.moveLiftDown()){
             liftMotor.setTargetPosition(liftMotor.getCurrentPosition() + 1);//see what this means
-        } todo add this to the config file*/
-
+        } todo add this to the config file
+*/
 
 
         // Choose to drive using either Tank Mode, or POV Mode
@@ -174,8 +198,8 @@ public class OneController_Iterative extends OpMode
                 mathOps.getFrontLeftMotorP(), mathOps.getFrontRightMotorP(), mathOps.getBackLeftMotorP(),
                 mathOps.getBackRightMotorP());
 
-        //mathOps.updatePowers();) {
-        mathOps.updatePowersSmoothly(16,0.001);
+        mathOps.updatePowers();
+        //mathOps.updatePowersSmoothly(16,0.001);
 
 
     }
@@ -207,3 +231,5 @@ public class OneController_Iterative extends OpMode
     }
 
 }
+
+
