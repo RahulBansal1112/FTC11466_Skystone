@@ -179,7 +179,7 @@ public class MecanumMathOps {
             telemetry.addData("Motors", "left back(%.2f), left front (%.2f)" +
                     "right back(%.2f), right front(%.2f)", this.blPower, this.flPower, this.brPower, this.frPower);
         }
-        
+
         //Reset back to original state
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //Make sure to check later
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
