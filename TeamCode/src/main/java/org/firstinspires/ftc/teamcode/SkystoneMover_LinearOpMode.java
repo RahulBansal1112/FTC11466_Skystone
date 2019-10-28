@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -61,6 +62,11 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
     private DcMotor rightFrontDrive;
     private DcMotor leftBackDrive;
     private DcMotor rightBackDrive;
+    private DcMotor liftMotor;
+    private Servo innerPincher;
+    private Servo outerPincher;
+    private Servo clamper1;
+    private Servo clamper2;
 
     @Override
 
@@ -79,7 +85,19 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class,"right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class,"right_back_drive");
 
-        MecanumMathOps mathOps = new MecanumMathOps(leftFrontDrive,leftBackDrive,rightFrontDrive,rightBackDrive,telemetry);
+        //liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
+
+        // Most robots need the motor on one side to be reversed to drive forward
+        // Reverse the motor that runs backwards when connected directly to the battery
+        /*
+        clamper1 = hardwareMap.get(Servo.class, "clamper1");
+        clamper2 = hardwareMap.get(Servo.class, "clamper2");
+
+        innerPincher = hardwareMap.get(Servo.class, "innerPincher");
+        outerPincher = hardwareMap.get(Servo.class, "outerPincher");
+        */
+
+        MecanumMathOps mathOps = new MecanumMathOps(this, leftFrontDrive,leftBackDrive,rightFrontDrive,rightBackDrive,telemetry);
 
         waitForStart();
         runtime.reset();
@@ -92,15 +110,16 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         //repeat
         //specifics later
 
-        //mathOps.moveInches(3, 0, 0);
+        mathOps.moveInches(3, 1, 0);
+        telemetry.update();
 
         //GO STRAIGHT RIGHT
-        sleep(3000);//there's a problem with sleep?
-        mathOps.strafeAndTurn(1,0,0);//STRAIGHT RIGHT
-        updateMotorSpeeds(mathOps);
+        //sleep(3000);//there's a problem with sleep?
+        //mathOps.strafeAndTurn(1,0,0);//STRAIGHT RIGHT
+        //updateMotorSpeeds(mathOps);
 
         //GO STRAIGHT LEFT
-        sleep(3000);//there's a problem with sleep?
+        /*sleep(3000);//there's a problem with sleep?
         mathOps.strafeAndTurn(-1,0,0);//STRAIGHT LEFT
         updateMotorSpeeds(mathOps);
 
@@ -112,7 +131,7 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         //STRAFE DOWN
         sleep(3000);//there's a problem with sleep?
         mathOps.strafeAndTurn(0,-1,0);//STRAIGHT DOWN
-        updateMotorSpeeds(mathOps);
+        updateMotorSpeeds(mathOps);*/
 
 
 
@@ -131,10 +150,38 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         rightBackDrive.setPower(rightBackPower);
         rightFrontDrive.setPower(rightFrontPower);
 
+
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Motors", "left back(%.2f), left front (%.2f)" +
                 "right back(%.2f), right front(%.2f)", leftBackPower, leftFrontPower, rightBackPower, rightFrontPower);
         telemetry.update();
+    }
+
+    private void switchClampPosition(){
+        if (this.clamper1.getPosition() < 90 && this.clamper2.getPosition() < 90) {//OPen?
+            this.clamper1.setPosition(180);//closed?
+            this.clamper2.setPosition(180);
+        }
+        else {//closed?
+            this.clamper1.setPosition(0);//open
+            this.clamper2.setPosition(0);
+        }
+    }
+
+    private void switchInnerPincher(){
+        if (this.innerPincher.getPosition() <45)//Open?
+            this.innerPincher.setPosition(90);//CLOSED?
+        else//CLOSE?
+            this.innerPincher.setPosition(0);//OPEN?
+    }
+
+    private void switchOuterPincher(){
+        if(this.outerPincher.getPosition() < 45){
+            outerPincher.setPosition(0);
+        }
+        if(this.outerPincher.getPosition() > 45){
+            outerPincher.setPosition(90);
+        }
     }
 }
