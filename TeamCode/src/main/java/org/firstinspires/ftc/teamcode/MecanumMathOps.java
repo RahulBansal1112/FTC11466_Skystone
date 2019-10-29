@@ -208,13 +208,17 @@ public class MecanumMathOps {
         rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
-
+        /*
         this.strafeAndTurn(x,y,0);
         this.flPower = Math.abs(this.flPower);
         this.updatePowers();
-
-
-        while(leftFrontDrive.isBusy() && mover.opModeIsActive()) {
+        */
+        this.flPower = 0.5;
+        this.frPower = 0.5;
+        this.blPower = 0.5;
+        this.brPower = 0.5;
+        this.updatePowers();
+        while((leftFrontDrive.isBusy() && rightFrontDrive.isBusy() && leftBackDrive.isBusy() && rightBackDrive.isBusy() ) && mover.opModeIsActive()) {
             telemetry.addData("Motors", "left back(%.2f), left front (%.2f)" +
                 "right back(%.2f), right front(%.2f)", this.blPower, this.flPower, this.brPower, this.frPower);
         }
@@ -237,10 +241,10 @@ public class MecanumMathOps {
         telemetry.addData("MOVEINCHES","ended");
 
         //Reset back to original state
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //Make sure to check later
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER); //Make sure to check later
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void turnDegrees(double r){
