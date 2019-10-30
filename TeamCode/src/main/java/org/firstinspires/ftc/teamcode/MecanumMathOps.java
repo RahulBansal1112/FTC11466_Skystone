@@ -188,24 +188,25 @@ public class MecanumMathOps {
         this.strafeAndTurn(x,y,0);
 
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+        leftBackDrive.setTargetPosition((int) (ENCODER_TICKS_PER_INCH * inches * this.blPower));
+        rightFrontDrive.setTargetPosition((int) (ENCODER_TICKS_PER_INCH * inches * this.frPower));
+        rightBackDrive.setTargetPosition((int) (ENCODER_TICKS_PER_INCH * inches * this.brPower));
         leftFrontDrive.setTargetPosition((int) (ENCODER_TICKS_PER_INCH * inches * this.flPower));
 
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftBackDrive.setTargetPosition((int) (ENCODER_TICKS_PER_INCH * inches * this.blPower));
-
         leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFrontDrive.setTargetPosition((int) (ENCODER_TICKS_PER_INCH * inches * this.frPower));
-
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBackDrive.setTargetPosition((int) (ENCODER_TICKS_PER_INCH * inches * this.brPower));
-
         rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
 
