@@ -110,7 +110,7 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         //repeat
         //specifics later
 
-        mathOps.moveInches(3, 1, 0);
+        mathOps.moveInches(30, 1, 0);
         telemetry.update();
 
         //GO STRAIGHT RIGHT
