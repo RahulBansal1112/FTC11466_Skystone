@@ -187,26 +187,21 @@ public class MecanumMathOps {
         //Let all motors run using encoder to get ticks
         this.strafeAndTurn(x,y,0);
 
-        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        int lbStrt = leftBackDrive.getCurrentPosition();
+        int lfStrt = leftFrontDrive.getCurrentPosition();
+        int rbStrt = rightBackDrive.getCurrentPosition();
+        int rfStrt = rightFrontDrive.getCurrentPosition();
+
+        int lbTrgt = leftBackDrive.getCurrentPosition() + (int) (ENCODER_TICKS_PER_INCH * inches * this.blPower);
+        int lfTrgt = leftFrontDrive.getCurrentPosition() + (int) (ENCODER_TICKS_PER_INCH * inches * this.flPower);
+        int rbTrgt = rightBackDrive.getCurrentPosition() + (int) (ENCODER_TICKS_PER_INCH * inches * this.brPower);
+        int rfTrgt = rightFrontDrive.getCurrentPosition() + (int) (ENCODER_TICKS_PER_INCH * inches * this.frPower);
+
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
-        leftBackDrive.setTargetPosition((int) (ENCODER_TICKS_PER_INCH * inches * this.blPower));
-        rightFrontDrive.setTargetPosition((int) (ENCODER_TICKS_PER_INCH * inches * this.frPower));
-        rightBackDrive.setTargetPosition((int) (ENCODER_TICKS_PER_INCH * inches * this.brPower));
-        leftFrontDrive.setTargetPosition((int) (ENCODER_TICKS_PER_INCH * inches * this.flPower));
-
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         /*
@@ -214,14 +209,48 @@ public class MecanumMathOps {
         this.flPower = Math.abs(this.flPower);
         this.updatePowers();
         */
-        this.flPower = 0.5;
-        this.frPower = 0.5;
-        this.blPower = 0.5;
-        this.brPower = 0.5;
+        ElapsedTime runTime = new ElapsedTime();
+        double prevTime = runTime.time();
+
         this.updatePowers();
-        while((leftFrontDrive.isBusy() && rightFrontDrive.isBusy() && leftBackDrive.isBusy() && rightBackDrive.isBusy() ) && mover.opModeIsActive()) {
-            telemetry.addData("Motors", "left back(%.2f), left front (%.2f)" +
-                "right back(%.2f), right front(%.2f)", this.blPower, this.flPower, this.brPower, this.frPower);
+        int delta = 10;
+        while((Math.abs(lfTrgt- leftFrontDrive.getCurrentPosition()) > delta ||
+                Math.abs(rfTrgt - rightFrontDrive.getCurrentPosition()) > delta ||
+                Math.abs(lbTrgt- leftBackDrive.getCurrentPosition()) > delta ||
+                Math.abs(rbTrgt - rightBackDrive.getCurrentPosition()) > delta
+                )&& mover.opModeIsActive()) {
+
+            if (Math.abs(lfTrgt- leftFrontDrive.getCurrentPosition()) > delta)
+                this.flPower = (float) (lfTrgt-this.leftFrontDrive.getCurrentPosition())/Math.abs(lfTrgt-lfStrt);
+            else
+                this.flPower = 0;
+
+            if (Math.abs(rfTrgt - rightFrontDrive.getCurrentPosition()) > delta)
+                this.frPower = (float) (rfTrgt-this.rightFrontDrive.getCurrentPosition())/Math.abs(rfTrgt-rfStrt);
+            else
+                this.frPower = 0;
+
+            if (Math.abs(lbTrgt- leftBackDrive.getCurrentPosition()) > delta)
+                this.blPower = (float) (lbTrgt-this.leftBackDrive.getCurrentPosition())/Math.abs(lbTrgt-lbStrt);
+            else
+                this.blPower = 0;
+
+            if (Math.abs(rbTrgt - rightBackDrive.getCurrentPosition()) > delta)
+                this.brPower = (float) (rbTrgt-this.rightBackDrive.getCurrentPosition())/Math.abs(rbTrgt-rbStrt);
+            else
+                this.brPower = 0;
+            this.updatePowersSmoothly((long)(1000L * (runTime.time()-prevTime)),0.005);
+
+            telemetry.addData("DELTA TIME","dt " + (long)(1000L * (runTime.time()-prevTime)));
+            telemetry.addData("Raw Motor Power",
+                    "lf(%.2f) rf(%.2f) lb(%.2f) rb(%.2f)",
+                    this.pFlPower, this.pFrPower, this.pBlPower,
+                    this.pBrPower);
+            telemetry.addData("Motors", "left back(%d), left front (%d)" +
+                "right back(%d), right front(%d)", lbTrgt-leftBackDrive.getCurrentPosition(), lfTrgt-leftFrontDrive.getCurrentPosition(),rbTrgt-rightBackDrive.getCurrentPosition(),rfTrgt-rightFrontDrive.getCurrentPosition());
+            telemetry.update();
+            prevTime = runTime.time();
+
         }
     /*
         while (leftFrontDrive.getCurrentPosition() != leftFrontDrive.getTargetPosition() ||

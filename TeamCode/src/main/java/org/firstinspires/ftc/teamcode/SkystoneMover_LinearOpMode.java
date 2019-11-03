@@ -99,6 +99,17 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
 
         MecanumMathOps mathOps = new MecanumMathOps(this, leftFrontDrive,leftBackDrive,rightFrontDrive,rightBackDrive,telemetry);
 
+        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
         waitForStart();
         runtime.reset();
         
@@ -109,11 +120,36 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         //go back
         //repeat
         //specifics later
+        /*mathOps.moveForAWhile(1000,0,1,0,1);
+        mathOps.strafeAndTurn(0,0,0);
+        mathOps.updatePowers();
+        sleep(1000);
+        mathOps.moveForAWhile(1500,1,0,0,1);
+        mathOps.strafeAndTurn(0,0,0);
+        mathOps.updatePowers();
+        sleep(1000);
+        mathOps.moveForAWhile(1000,0,-1,0,1);
+        mathOps.strafeAndTurn(0,0,0);
+        mathOps.updatePowers();
+        sleep(1000);
+        mathOps.moveForAWhile(1500,-1,0,0,1);
+        mathOps.strafeAndTurn(0,0,0);
+        mathOps.updatePowers();
+        sleep(1000);*/
 
+        mathOps.moveInches(30, 0, 1);
+        mathOps.strafeAndTurn(0,0,0);
+        mathOps.updatePowers();
+        sleep(1000);
         mathOps.moveInches(30, 1, 0);
-        telemetry.update();
-
-        //GO STRAIGHT RIGHT
+        mathOps.strafeAndTurn(0,0,0);
+        mathOps.updatePowers();
+        sleep(1000);
+        mathOps.moveInches(30, 0, -1);
+        mathOps.strafeAndTurn(0,0,0);
+        mathOps.updatePowers();
+        sleep(1000);
+        mathOps.moveInches(30, -1, 0);
         //sleep(3000);//there's a problem with sleep?
         //mathOps.strafeAndTurn(1,0,0);//STRAIGHT RIGHT
         //updateMotorSpeeds(mathOps);
