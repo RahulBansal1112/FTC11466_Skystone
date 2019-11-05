@@ -137,19 +137,19 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         mathOps.updatePowers();
         sleep(1000);*/
 
-        mathOps.moveInches(30, 0, 1);
+        mathOps.moveInches(24, 0, 1);
         mathOps.strafeAndTurn(0,0,0);
         mathOps.updatePowers();
         sleep(1000);
-        mathOps.moveInches(30, 1, 0);
+        mathOps.moveInches(24, 1, 0);
         mathOps.strafeAndTurn(0,0,0);
         mathOps.updatePowers();
         sleep(1000);
-        mathOps.moveInches(30, 0, -1);
+        mathOps.moveInches(24, 0, -1);
         mathOps.strafeAndTurn(0,0,0);
         mathOps.updatePowers();
         sleep(1000);
-        mathOps.moveInches(30, -1, 0);
+        mathOps.moveInches(24, -1, 0);
         //sleep(3000);//there's a problem with sleep?
         //mathOps.strafeAndTurn(1,0,0);//STRAIGHT RIGHT
         //updateMotorSpeeds(mathOps);

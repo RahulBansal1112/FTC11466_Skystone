@@ -69,6 +69,8 @@ public class OneController_Iterative extends OpMode
     private Servo clamper2;
 
     private MecanumMathOps mathOps;
+
+    private boolean driveMode = false; //true = acceleration, false = none
     //initialize clamp + stuff
 
     /*
@@ -171,19 +173,32 @@ public class OneController_Iterative extends OpMode
             liftMotor.setTargetPosition(liftMotor.getCurrentPosition() + 1);//see what this means
         } todo add this to the config file
 
-
-
-
         */
+
+        if (gamepad1.x) {
+            changeDriveMode();
+        }
+
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString()+ " " + gamepad1.left_stick_x + " " + gamepad1.left_stick_y);
         telemetry.addData("Motors Turning", "turn(%.2f)", gamepad1.right_stick_x);
+        telemetry.addData("Acceleration on:", driveMode);
         telemetry.addData("Raw Motor Power",
                 "lf(%.2f) rf(%.2f) lb(%.2f) rb(%.2f)",
                 mathOps.getFrontLeftMotorP(), mathOps.getFrontRightMotorP(), mathOps.getBackLeftMotorP(),
                 mathOps.getBackRightMotorP());
 
-        mathOps.updatePowers();
+        if (driveMode == true) {
+            if (gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0 || gamepad1.right_stick_x != 0) {
+                mathOps.updatePowersSmoothly(16, 0.01);
+            }
+            else {
+                mathOps.updatePowers();
+            }
+        }
+        else {
+            mathOps.updatePowers();
+        }
         //mathOps.updatePowersSmoothly(16,0.001);
 
 
@@ -196,6 +211,13 @@ public class OneController_Iterative extends OpMode
     public void stop() {
     }
 
+    private void changeDriveMode() {
+
+        if (driveMode == true) driveMode = false;
+        else driveMode = true;
+
+    }
+
     private boolean getClamp() {
         return gamepad1.right_bumper;
     }
@@ -203,8 +225,8 @@ public class OneController_Iterative extends OpMode
         return gamepad1.a;
     }
     private boolean getPincherOuterClose() {
-        return gamepad1.b; //placeholder
-    }
+            return gamepad1.b; //placeholder
+        }
     private boolean getPincherInner() {
         return gamepad1.left_bumper;
     }

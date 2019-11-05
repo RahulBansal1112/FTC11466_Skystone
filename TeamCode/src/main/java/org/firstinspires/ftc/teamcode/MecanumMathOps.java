@@ -212,8 +212,8 @@ public class MecanumMathOps {
         ElapsedTime runTime = new ElapsedTime();
         double prevTime = runTime.time();
 
-        this.updatePowers();
-        int delta = 10;
+        //this.updatePowers();
+        int delta = 20;
         while((Math.abs(lfTrgt- leftFrontDrive.getCurrentPosition()) > delta ||
                 Math.abs(rfTrgt - rightFrontDrive.getCurrentPosition()) > delta ||
                 Math.abs(lbTrgt- leftBackDrive.getCurrentPosition()) > delta ||
@@ -239,13 +239,26 @@ public class MecanumMathOps {
                 this.brPower = (float) (rbTrgt-this.rightBackDrive.getCurrentPosition())/Math.abs(rbTrgt-rbStrt);
             else
                 this.brPower = 0;
-            this.updatePowersSmoothly((long)(1000L * (runTime.time()-prevTime)),0.005);
-
+            /*if (Math.abs(this.rightBackDrive.getCurrentPosition()-rbTrgt)/(float)Math.abs(rbTrgt-rbStrt) > 0.5 &&
+                    Math.abs(this.rightFrontDrive.getCurrentPosition()-rfTrgt)/(float)Math.abs(rfTrgt-rfStrt) > 0.5 &&
+                    Math.abs(this.leftBackDrive.getCurrentPosition()-lbTrgt)/(float)Math.abs(lbTrgt-lbStrt) > 0.5 &&
+                    Math.abs(this.leftFrontDrive.getCurrentPosition()-lfTrgt)/(float)Math.abs(lfTrgt-lfStrt) > 0.5) {
+                this.updatePowersSmoothly((long) (1000L * (runTime.time() - prevTime)), 0.005);
+                telemetry.addData("Mode: ", "accelerating");
+            }
+            else {*/
+            this.flPower *= 0.5;
+            this.blPower *= 0.5;
+            this.frPower *= 0.5;
+            this.brPower *= 0.5;
+            this.updatePowers();
+                //telemetry.addData("Mode: ", "not accelerating");
+            //}
             telemetry.addData("DELTA TIME","dt " + (long)(1000L * (runTime.time()-prevTime)));
             telemetry.addData("Raw Motor Power",
                     "lf(%.2f) rf(%.2f) lb(%.2f) rb(%.2f)",
-                    this.pFlPower, this.pFrPower, this.pBlPower,
-                    this.pBrPower);
+                    this.flPower, this.frPower, this.blPower,
+                    this.brPower);
             telemetry.addData("Motors", "left back(%d), left front (%d)" +
                 "right back(%d), right front(%d)", lbTrgt-leftBackDrive.getCurrentPosition(), lfTrgt-leftFrontDrive.getCurrentPosition(),rbTrgt-rightBackDrive.getCurrentPosition(),rfTrgt-rightFrontDrive.getCurrentPosition());
             telemetry.update();
@@ -287,6 +300,11 @@ public class MecanumMathOps {
         this.rightBackDrive.setPower(this.getBackRightMotorP());
         this.leftBackDrive.setPower(this.getBackLeftMotorP());
         this.leftFrontDrive.setPower(this.getFrontLeftMotorP());
+
+        this.pFlPower = flPower;
+        this.pBlPower = blPower;
+        this.pFrPower = frPower;
+        this.pBrPower = brPower;
 
     }
 
