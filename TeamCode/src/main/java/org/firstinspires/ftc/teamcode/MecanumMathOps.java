@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class MecanumMathOps {
     private final double ENCODER_TICKS_PER_INCH = (288./(2.6 * 4 * Math.PI));
-    ;
+
 
     //See if we can make all the methods static (probably not)?
     private double speed = 1.0;
@@ -174,6 +174,12 @@ public class MecanumMathOps {
 
     }
 
+    public double calculateCounts(double inches){
+
+        return 288 * inches/(4 * Math.PI) * 2.6;
+
+    }
+
     public void moveInches(double inches, double x, double y){
         telemetry.addData("MOVEINCHES","started");
 
@@ -197,6 +203,12 @@ public class MecanumMathOps {
         int lfTrgt = leftFrontDrive.getCurrentPosition() + (int) (ENCODER_TICKS_PER_INCH * inches * this.flPower);
         int rbTrgt = rightBackDrive.getCurrentPosition() + (int) (ENCODER_TICKS_PER_INCH * inches * this.brPower);
         int rfTrgt = rightFrontDrive.getCurrentPosition() + (int) (ENCODER_TICKS_PER_INCH * inches * this.frPower);
+
+        //int lbTrgt = leftBackDrive.getCurrentPosition() + (int) (calculateCounts(inches) * this.blPower);
+        //int lfTrgt = leftFrontDrive.getCurrentPosition() + (int) (calculateCounts(inches) * this.flPower);
+        //int rbTrgt = rightBackDrive.getCurrentPosition() + (int) (calculateCounts(inches) * this.brPower);
+        //int rfTrgt = rightFrontDrive.getCurrentPosition() + (int) (calculateCounts(inches) * this.frPower);
+
 
         leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

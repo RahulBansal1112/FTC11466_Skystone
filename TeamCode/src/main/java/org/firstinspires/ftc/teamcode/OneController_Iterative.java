@@ -175,6 +175,7 @@ public class OneController_Iterative extends OpMode
 
         */
 
+
         if (gamepad1.x) {
             changeDriveMode();
         }
@@ -230,11 +231,14 @@ public class OneController_Iterative extends OpMode
     private boolean getPincherInner() {
         return gamepad1.left_bumper;
     }
-    private boolean moveLiftUp() {
+    private boolean getLiftUp() {
         return gamepad1.dpad_up;
     }
-    private boolean moveLiftDown() {
+    private boolean getLiftDown() {
         return gamepad1.dpad_down;
+    }
+    private void moveLiftUp() {
+
     }
 
 }
