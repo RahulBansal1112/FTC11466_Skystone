@@ -86,10 +86,10 @@ public class OneController_Iterative extends OpMode
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
-        rightBackDrive = hardwareMap.get(DcMotor.class,"right_back_drive");
 
 
-        //liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
+        //lift = hardwareMap.get(DcMotor.class, "lift");
+        //mathOps.initLift(); //MAKE SURE THE LIFT IS ALL THE WAY DOWN WHEN STARTING.
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -131,6 +131,19 @@ public class OneController_Iterative extends OpMode
     public void loop() {
 
         mathOps.strafeAndTurn(gamepad1.left_stick_x,-gamepad1.left_stick_y, gamepad1.right_stick_x);
+        //if (getLiftDown()) {
+
+            //mathOps.moveLiftDown(0.25);
+            //telemetry.addData("Lift direction: ", "down");
+
+        //}
+        //else if (getLiftUp()) {
+
+            //mathOps.moveLiftUp(0.25);
+            //telemetry.addData("Lift direction: ", "up");
+
+        //}
+
         /*
         // If the user presses the right bumper and any of the clamps are outside the chassis, bring
         // back in or else push them back out

@@ -26,16 +26,21 @@ public class MecanumMathOps {
     private DcMotor rightFrontDrive;
     private DcMotor leftBackDrive;
     private DcMotor rightBackDrive;
+
+    private DcMotor lift;
+
     //powers
     private double flPower = 0;
     private double frPower = 0;
     private double blPower = 0;
     private double brPower = 0;
+    private double liftPower = 0;
 
     private double pFlPower = 0;
     private double pFrPower = 0;
     private double pBlPower = 0;
     private double pBrPower = 0;
+    private double pLiftPower = 0;
 
     private SkystoneMover_LinearOpMode mover;
 
@@ -44,6 +49,8 @@ public class MecanumMathOps {
         this.rightFrontDrive = rightFront;
         this.leftBackDrive  = leftBack;
         this.rightBackDrive = rightBack;
+        //this.lift = lift;
+
         this.telemetry = telemetry;
         this.mover = mover;
 
@@ -59,6 +66,7 @@ public class MecanumMathOps {
         this.rightFrontDrive = rightFront;
         this.leftBackDrive  = leftBack;
         this.rightBackDrive = rightBack;
+        //this.lift = lift;
         this.telemetry = telemetry;
 
 
@@ -84,6 +92,8 @@ public class MecanumMathOps {
     public double getBackRightMotorP(){
         return this.brPower;// * this.speed;
     }
+
+    public double getLiftP() {  return this.liftPower;  }
 
     public void setSpeed(double speed){
         this.speed = speed;
@@ -133,6 +143,36 @@ public class MecanumMathOps {
             this.blPower /= scalar;
             this.brPower /= scalar;
         }
+    }
+
+    public void initLift() {
+
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+    }
+
+    public void moveLiftDown(double power) {
+
+        //amount of revs needed to go from lift start to end: ~3
+
+        if (this.lift.getCurrentPosition() >= 288 * 0.25) {
+            this.liftPower = -power;
+        }
+        else {
+            this.liftPower = power;
+        }
+
+    }
+
+    public void moveLiftUp(double power) {
+
+        if (this.lift.getCurrentPosition() <= 288 * 2.5) {
+            this.liftPower = power;
+        }
+        else {
+            this.liftPower = -power;
+        }
+
     }
 
     private double maxAbsValue(double a, double b, double c, double  d){
@@ -312,11 +352,13 @@ public class MecanumMathOps {
         this.rightBackDrive.setPower(this.getBackRightMotorP());
         this.leftBackDrive.setPower(this.getBackLeftMotorP());
         this.leftFrontDrive.setPower(this.getFrontLeftMotorP());
+        //this.lift.setPower(this.getLiftP());
 
         this.pFlPower = flPower;
         this.pBlPower = blPower;
         this.pFrPower = frPower;
         this.pBrPower = brPower;
+        //this.pLiftPower = liftPower;
 
     }
 
@@ -325,11 +367,14 @@ public class MecanumMathOps {
         this.pFrPower = Range.clip(this.pFrPower + Range.clip(this.frPower-pFrPower,-maxPowerChangePerMilli*dt,maxPowerChangePerMilli*dt),-1,1);
         this.pBlPower = Range.clip(this.pBlPower + Range.clip(this.blPower-pBlPower,-maxPowerChangePerMilli*dt,maxPowerChangePerMilli*dt),-1,1);
         this.pBrPower = Range.clip(this.pBrPower + Range.clip(this.brPower-pBrPower,-maxPowerChangePerMilli*dt,maxPowerChangePerMilli*dt),-1,1);
+        //this.pLiftPower = Range.clip(this.pLiftPower + Range.clip(this.liftPower - this.pLiftPower, -maxPowerChangePerMilli * dt, maxPowerChangePerMilli * dt), -1, 1);
 
         this.rightFrontDrive.setPower(this.pFrPower);
         this.leftFrontDrive.setPower(this.pFlPower);
         this.rightBackDrive.setPower(this.pBrPower);
         this.leftBackDrive.setPower(this.pBlPower);
+        //this.lift.setPower(this.pLiftPower);
+
     }
 
 
