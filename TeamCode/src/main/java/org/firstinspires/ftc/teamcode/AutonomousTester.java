@@ -53,8 +53,8 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="SkystoneMover_LinearOpMode", group="Linear Opmode")
-public class SkystoneMover_LinearOpMode extends LinearOpMode {
+@Autonomous(name="AutoTester", group="Linear Opmode")
+public class AutonomousTester extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -72,7 +72,8 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
 
 
     public void runOpMode() {
-        //Make instance of MathOps class
+
+//Make instance of MathOps class
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -97,7 +98,6 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         outerPincher = hardwareMap.get(Servo.class, "outerPincher");
         */
 
-        MecanumMathOps mathOps = new MecanumMathOps(this, leftFrontDrive,leftBackDrive,rightFrontDrive,rightBackDrive,telemetry);
 
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -109,71 +109,12 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-
         waitForStart();
-        runtime.reset();
-        
-        //plans for autonomous:
-        //get to a stone
-        //pick it up
-        //move both robot and stone to building zone
-        //go back
-        //repeat
-        //specifics later
-        /*mathOps.moveForAWhile(1000,0,1,0,1);
-        mathOps.strafeAndTurn(0,0,0);
-        mathOps.updatePowers();
-        sleep(1000);
-        mathOps.moveForAWhile(1500,1,0,0,1);
-        mathOps.strafeAndTurn(0,0,0);
-        mathOps.updatePowers();
-        sleep(1000);
-        mathOps.moveForAWhile(1000,0,-1,0,1);
-        mathOps.strafeAndTurn(0,0,0);
-        mathOps.updatePowers();
-        sleep(1000);
-        mathOps.moveForAWhile(1500,-1,0,0,1);
-        mathOps.strafeAndTurn(0,0,0);
-        mathOps.updatePowers();
-        sleep(1000);*/
 
-        //mathOps.moveInches(6, 1, 1);
-        //mathOps.strafeAndTurn(0,0,0);
-        //mathOps.updatePowers();
-        mathOps.moveInches(12, 0, 1);
-        mathOps.strafeAndTurn(0,0,0);
-        mathOps.updatePowers();
-
-        sleep(1000);
-        mathOps.moveInches(12, 1, 0);
-        mathOps.strafeAndTurn(0,0,0);
-        mathOps.updatePowers();
-        sleep(1000);
-        /*mathOps.moveInches(12, 0, -1);
-        mathOps.strafeAndTurn(0,0,0);
-        mathOps.updatePowers();
-        sleep(1000);
-        mathOps.moveInches(12, -1, 0);
-        mathOps.updatePowers();
-        sleep(1000); */
-        //sleep(3000);//there's a problem with sleep?
-        //mathOps.strafeAndTurn(1,0,0);//STRAIGHT RIGHT
-        //updateMotorSpeeds(mathOps);
-
-        //GO STRAIGHT LEFT
-        /*sleep(3000);//there's a problem with sleep?
-        mathOps.strafeAndTurn(-1,0,0);//STRAIGHT LEFT
-        updateMotorSpeeds(mathOps);
-
-        //STRAFE UP
-        sleep(3000);//there's a problem with sleep?
-        mathOps.strafeAndTurn(0,1,0);//STRAIGHT UP
-        updateMotorSpeeds(mathOps);
-
-        //STRAFE DOWN
-        sleep(3000);//there's a problem with sleep?
-        mathOps.strafeAndTurn(0,-1,0);//STRAIGHT DOWN
-        updateMotorSpeeds(mathOps);*/
+        while (opModeIsActive()){
+            telemetry.addData("LEFTFRONT","current pos" + leftFrontDrive.getCurrentPosition());
+            telemetry.update();
+        }
 
 
 

@@ -299,10 +299,10 @@ public class MecanumMathOps {
                 telemetry.addData("Mode: ", "accelerating");
             }
             else {*/
-            this.flPower *= 0.5;
-            this.blPower *= 0.5;
-            this.frPower *= 0.5;
-            this.brPower *= 0.5;
+//            this.flPower *= 0.5;
+//            this.blPower *= 0.5;
+//            this.frPower *= 0.5;
+//            this.brPower *= 0.5;
             this.updatePowers();
                 //telemetry.addData("Mode: ", "not accelerating");
             //}
@@ -340,6 +340,13 @@ public class MecanumMathOps {
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        telemetry.addData("Raw Motor Power",
+                "lf(%.2f) rf(%.2f) lb(%.2f) rb(%.2f)",
+                this.flPower, this.frPower, this.blPower,
+                this.brPower);
+        telemetry.addData("Motors", "left back(%d), left front (%d)" +
+                "right back(%d), right front(%d)", lbTrgt-leftBackDrive.getCurrentPosition(), lfTrgt-leftFrontDrive.getCurrentPosition(),rbTrgt-rightBackDrive.getCurrentPosition(),rfTrgt-rightFrontDrive.getCurrentPosition());
+        telemetry.update();
     }
 
     public void turnDegrees(double r){
