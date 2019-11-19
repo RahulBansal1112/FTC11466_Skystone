@@ -140,12 +140,12 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         //mathOps.moveInches(6, 1, 1);
         //mathOps.strafeAndTurn(0,0,0);
         //mathOps.updatePowers();
-        mathOps.moveInches(12, 0, 1);
-        mathOps.strafeAndTurn(0,0,0);
-        mathOps.updatePowers();
+        //mathOps.moveInches(12, 0, 1);
+        //mathOps.strafeAndTurn(0,0,0);
+        //mathOps.updatePowers();
 
-        sleep(1000);
-        mathOps.moveInches(12, 1, 0);
+        //sleep(1000);
+        mathOps.moveInches(24, 1, 0);
         mathOps.strafeAndTurn(0,0,0);
         mathOps.updatePowers();
         sleep(1000);

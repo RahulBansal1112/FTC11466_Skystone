@@ -9,7 +9,8 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class MecanumMathOps {
-    private final double ENCODER_TICKS_PER_INCH = (288./(2.6 * 4 * Math.PI));
+    //todo this is only for test chasis
+    private final double ENCODER_TICKS_PER_INCH = (288./(4 * Math.PI));
 
 
     //See if we can make all the methods static (probably not)?
@@ -231,7 +232,12 @@ public class MecanumMathOps {
         //rightBackDrive.setTargetPosition((int)(rightBackDrive.getCurrentPosition() + ENCODER_TICKS_PER_INCH * inches));
 
         //Let all motors run using encoder to get ticks
-        this.strafeAndTurn(x,y,0);
+        double scalar = 1/Math.hypot(x,y);
+        this.flPower = (x + y)*scalar;
+        this.frPower = (- x + y)*scalar;
+        this.blPower = (- x + y)*scalar;
+        this.brPower = (x + y)*scalar;
+
 
 
         int lbStrt = leftBackDrive.getCurrentPosition();
@@ -266,10 +272,10 @@ public class MecanumMathOps {
 
         //this.updatePowers();
         int delta = 20;
-        while((Math.abs(lfTrgt- leftFrontDrive.getCurrentPosition()) > delta ||
-                Math.abs(rfTrgt - rightFrontDrive.getCurrentPosition()) > delta ||
-                Math.abs(lbTrgt- leftBackDrive.getCurrentPosition()) > delta ||
-                Math.abs(rbTrgt - rightBackDrive.getCurrentPosition()) > delta
+        while((Math.abs(lfTrgt- leftFrontDrive.getCurrentPosition()) +
+                Math.abs(rfTrgt - rightFrontDrive.getCurrentPosition())+
+                Math.abs(lbTrgt- leftBackDrive.getCurrentPosition()) +
+                Math.abs(rbTrgt - rightBackDrive.getCurrentPosition()) > delta*4
                 )&& mover.opModeIsActive()) {
 
             if (Math.abs(lfTrgt- leftFrontDrive.getCurrentPosition()) > delta)
@@ -291,28 +297,45 @@ public class MecanumMathOps {
                 this.brPower = (float) (rbTrgt-this.rightBackDrive.getCurrentPosition())/Math.abs(rbTrgt-rbStrt);
             else
                 this.brPower = 0;
-            /*if (Math.abs(this.rightBackDrive.getCurrentPosition()-rbTrgt)/(float)Math.abs(rbTrgt-rbStrt) > 0.5 &&
+
+
+            if (Math.abs(this.flPower) < 0.2f && this.flPower != 0){
+                this.flPower = (this.flPower > 0) ? 0.2f:-0.2f;
+            }
+            if (Math.abs(this.frPower) < 0.2f && this.frPower != 0){
+                this.frPower = (this.frPower > 0) ? 0.2f:-0.2f;
+            }
+            if (Math.abs(this.blPower) < 0.2f && this.blPower != 0){
+                this.blPower = (this.blPower > 0) ? 0.2f:-0.2f;
+            }
+            if (Math.abs(this.brPower) < 0.2f && this.brPower != 0){
+                this.brPower = (this.brPower > 0) ? 0.2f:-0.2f;
+            }
+
+            if (Math.abs(this.rightBackDrive.getCurrentPosition()-rbTrgt)/(float)Math.abs(rbTrgt-rbStrt) > 0.5 &&
                     Math.abs(this.rightFrontDrive.getCurrentPosition()-rfTrgt)/(float)Math.abs(rfTrgt-rfStrt) > 0.5 &&
                     Math.abs(this.leftBackDrive.getCurrentPosition()-lbTrgt)/(float)Math.abs(lbTrgt-lbStrt) > 0.5 &&
                     Math.abs(this.leftFrontDrive.getCurrentPosition()-lfTrgt)/(float)Math.abs(lfTrgt-lfStrt) > 0.5) {
                 this.updatePowersSmoothly((long) (1000L * (runTime.time() - prevTime)), 0.005);
                 telemetry.addData("Mode: ", "accelerating");
             }
-            else {*/
+            else {
 //            this.flPower *= 0.5;
 //            this.blPower *= 0.5;
 //            this.frPower *= 0.5;
 //            this.brPower *= 0.5;
             this.updatePowers();
                 //telemetry.addData("Mode: ", "not accelerating");
-            //}
+            }
             telemetry.addData("DELTA TIME","dt " + (long)(1000L * (runTime.time()-prevTime)));
             telemetry.addData("Raw Motor Power",
                     "lf(%.2f) rf(%.2f) lb(%.2f) rb(%.2f)",
                     this.flPower, this.frPower, this.blPower,
                     this.brPower);
             telemetry.addData("Motors", "left back(%d), left front (%d)" +
-                "right back(%d), right front(%d)", lbTrgt-leftBackDrive.getCurrentPosition(), lfTrgt-leftFrontDrive.getCurrentPosition(),rbTrgt-rightBackDrive.getCurrentPosition(),rfTrgt-rightFrontDrive.getCurrentPosition());
+                "right back(%d), right front(%d)", lbTrgt-lbStrt, lfTrgt-lfStrt,rbTrgt-rbStrt,rfTrgt-rfStrt);
+            telemetry.addData("Motors", "left back(%d), left front (%d)" +
+                    "right back(%d), right front(%d)", lbTrgt-leftBackDrive.getCurrentPosition(), lfTrgt-leftFrontDrive.getCurrentPosition(),rbTrgt-rightBackDrive.getCurrentPosition(),rfTrgt-rightFrontDrive.getCurrentPosition());
             telemetry.update();
             prevTime = runTime.time();
 
