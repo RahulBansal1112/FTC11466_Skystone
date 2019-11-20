@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class MecanumMathOps {
     //todo this is only for test chasis
-    private final double ENCODER_TICKS_PER_INCH = (288./(4 * Math.PI));
+    private final double ENCODER_TICKS_PER_INCH = (288./( 4 * Math.PI));
 
 
     //See if we can make all the methods static (probably not)?
@@ -276,7 +276,7 @@ public class MecanumMathOps {
                 Math.abs(rfTrgt - rightFrontDrive.getCurrentPosition())+
                 Math.abs(lbTrgt- leftBackDrive.getCurrentPosition()) +
                 Math.abs(rbTrgt - rightBackDrive.getCurrentPosition()) > delta*4
-                )&& mover.opModeIsActive()) {
+        )&& mover.opModeIsActive()) {
 
             if (Math.abs(lfTrgt- leftFrontDrive.getCurrentPosition()) > delta)
                 this.flPower = (float) (lfTrgt-this.leftFrontDrive.getCurrentPosition())/Math.abs(lfTrgt-lfStrt);
@@ -298,18 +298,18 @@ public class MecanumMathOps {
             else
                 this.brPower = 0;
 
-
-            if (Math.abs(this.flPower) < 0.2f && this.flPower != 0){
-                this.flPower = (this.flPower > 0) ? 0.2f:-0.2f;
+            float minPower = 0.3f;
+            if (Math.abs(this.flPower) < minPower && this.flPower != 0){
+                this.flPower = (this.flPower > 0) ? minPower:-minPower;
             }
-            if (Math.abs(this.frPower) < 0.2f && this.frPower != 0){
-                this.frPower = (this.frPower > 0) ? 0.2f:-0.2f;
+            if (Math.abs(this.frPower) < minPower && this.frPower != 0){
+                this.frPower = (this.frPower > 0) ? minPower:-minPower;
             }
-            if (Math.abs(this.blPower) < 0.2f && this.blPower != 0){
-                this.blPower = (this.blPower > 0) ? 0.2f:-0.2f;
+            if (Math.abs(this.blPower) < minPower && this.blPower != 0){
+                this.blPower = (this.blPower > 0) ? minPower:-minPower;
             }
-            if (Math.abs(this.brPower) < 0.2f && this.brPower != 0){
-                this.brPower = (this.brPower > 0) ? 0.2f:-0.2f;
+            if (Math.abs(this.brPower) < minPower && this.brPower != 0){
+                this.brPower = (this.brPower > 0) ? minPower:-minPower;
             }
 
             if (Math.abs(this.rightBackDrive.getCurrentPosition()-rbTrgt)/(float)Math.abs(rbTrgt-rbStrt) > 0.5 &&
@@ -324,7 +324,7 @@ public class MecanumMathOps {
 //            this.blPower *= 0.5;
 //            this.frPower *= 0.5;
 //            this.brPower *= 0.5;
-            this.updatePowers();
+                this.updatePowers();
                 //telemetry.addData("Mode: ", "not accelerating");
             }
             telemetry.addData("DELTA TIME","dt " + (long)(1000L * (runTime.time()-prevTime)));
@@ -333,7 +333,7 @@ public class MecanumMathOps {
                     this.flPower, this.frPower, this.blPower,
                     this.brPower);
             telemetry.addData("Motors", "left back(%d), left front (%d)" +
-                "right back(%d), right front(%d)", lbTrgt-lbStrt, lfTrgt-lfStrt,rbTrgt-rbStrt,rfTrgt-rfStrt);
+                    "right back(%d), right front(%d)", lbTrgt-lbStrt, lfTrgt-lfStrt,rbTrgt-rbStrt,rfTrgt-rfStrt);
             telemetry.addData("Motors", "left back(%d), left front (%d)" +
                     "right back(%d), right front(%d)", lbTrgt-leftBackDrive.getCurrentPosition(), lfTrgt-leftFrontDrive.getCurrentPosition(),rbTrgt-rightBackDrive.getCurrentPosition(),rfTrgt-rightFrontDrive.getCurrentPosition());
             telemetry.update();
