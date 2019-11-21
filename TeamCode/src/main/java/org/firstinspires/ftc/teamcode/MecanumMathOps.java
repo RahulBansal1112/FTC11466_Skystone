@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.robocol.RobocolParsable;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -221,7 +222,7 @@ public class MecanumMathOps {
 
     }
 
-    public void moveInches(double inches, double x, double y){
+    public void  moveInches(double inches, double x, double y){
         telemetry.addData("MOVEINCHES","started");
 
         //Set target position(going straight) to the motors
@@ -237,6 +238,7 @@ public class MecanumMathOps {
         this.frPower = (- x + y)*scalar;
         this.blPower = (- x + y)*scalar;
         this.brPower = (x + y)*scalar;
+
 
 
 
@@ -275,30 +277,53 @@ public class MecanumMathOps {
         while((Math.abs(lfTrgt- leftFrontDrive.getCurrentPosition()) +
                 Math.abs(rfTrgt - rightFrontDrive.getCurrentPosition())+
                 Math.abs(lbTrgt- leftBackDrive.getCurrentPosition()) +
-                Math.abs(rbTrgt - rightBackDrive.getCurrentPosition()) > delta*4
-        )&& mover.opModeIsActive()) {
+                Math.abs(rbTrgt - rightBackDrive.getCurrentPosition()) > delta*4 && (Math.abs(lfStrt- leftFrontDrive.getCurrentPosition()) +
+                Math.abs(rfStrt - rightFrontDrive.getCurrentPosition())+
+                Math.abs(lbStrt- leftBackDrive.getCurrentPosition()) +
+                Math.abs(rbStrt - rightBackDrive.getCurrentPosition()) < Math.abs(rbTrgt -rbStrt) +
+                Math.abs(rfTrgt-rfStrt) +
+                Math.abs(lfTrgt-lfStrt)+
+                Math.abs(lbTrgt-lbStrt)))
+        && mover.opModeIsActive()) {
+            scalar = 1/Math.hypot(x,y);
+            this.flPower = (x + y)*scalar;
+            this.frPower = (- x + y)*scalar;
+            this.blPower = (- x + y)*scalar;
+            this.brPower = (x + y)*scalar;
 
-            if (Math.abs(lfTrgt- leftFrontDrive.getCurrentPosition()) > delta)
-                this.flPower = (float) (lfTrgt-this.leftFrontDrive.getCurrentPosition())/Math.abs(lfTrgt-lfStrt);
-            else
-                this.flPower = 0;
-
-            if (Math.abs(rfTrgt - rightFrontDrive.getCurrentPosition()) > delta)
-                this.frPower = (float) (rfTrgt-this.rightFrontDrive.getCurrentPosition())/Math.abs(rfTrgt-rfStrt);
-            else
-                this.frPower = 0;
-
-            if (Math.abs(lbTrgt- leftBackDrive.getCurrentPosition()) > delta)
-                this.blPower = (float) (lbTrgt-this.leftBackDrive.getCurrentPosition())/Math.abs(lbTrgt-lbStrt);
-            else
-                this.blPower = 0;
-
-            if (Math.abs(rbTrgt - rightBackDrive.getCurrentPosition()) > delta)
-                this.brPower = (float) (rbTrgt-this.rightBackDrive.getCurrentPosition())/Math.abs(rbTrgt-rbStrt);
-            else
-                this.brPower = 0;
-
-            float minPower = 0.3f;
+            float speed = (float)(Math.abs(lfTrgt- leftFrontDrive.getCurrentPosition()) +
+                    Math.abs(rfTrgt - rightFrontDrive.getCurrentPosition())+
+                    Math.abs(lbTrgt- leftBackDrive.getCurrentPosition()) +
+                    Math.abs(rbTrgt - rightBackDrive.getCurrentPosition()))/
+                    (Math.abs(lfStrt- leftFrontDrive.getCurrentPosition()) +
+                            Math.abs(rfStrt - rightFrontDrive.getCurrentPosition())+
+                            Math.abs(lbStrt- leftBackDrive.getCurrentPosition()) +
+                            Math.abs(rbStrt - rightBackDrive.getCurrentPosition()));
+//            if (Math.abs(lfTrgt- leftFrontDrive.getCurrentPosition()
+//            if (Math.abs(lfTrgt- leftFrontDrive.getCurrentPosition()) > delta
+//                this.flPower = (float) (lfTrgt-this.leftFrontDrive.getCurrentPosition())/Math.abs(lfTrgt-lfStrt);
+//            else
+//                this.flPower = 0;
+//
+//            if (Math.abs(rfTrgt - rightFrontDrive.getCurrentPosition()) > delta)
+//                this.frPower = (float) (rfTrgt-this.rightFrontDrive.getCurrentPosition())/Math.abs(rfTrgt-rfStrt);
+//            else
+//                this.frPower = 0;
+//
+//            if (Math.abs(lbTrgt- leftBackDrive.getCurrentPosition()) > delta)
+//                this.blPower = (float) (lbTrgt-this.leftBackDrive.getCurrentPosition())/Math.abs(lbTrgt-lbStrt);
+//            else
+//                this.blPower = 0;
+//
+//            if (Math.abs(rbTrgt - rightBackDrive.getCurrentPosition()) > delta)
+//                this.brPower = (float) (rbTrgt-this.rightBackDrive.getCurrentPosition())/Math.abs(rbTrgt-rbStrt);
+//            else
+//                this.brPower = 0;
+            this.flPower *= speed;
+            this.brPower *= speed;
+            this.blPower *= speed;
+            this.frPower *= speed;
+            float minPower = 0.2f;
             if (Math.abs(this.flPower) < minPower && this.flPower != 0){
                 this.flPower = (this.flPower > 0) ? minPower:-minPower;
             }
@@ -365,7 +390,8 @@ public class MecanumMathOps {
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         telemetry.addData("Raw Motor Power",
                 "lf(%.2f) rf(%.2f) lb(%.2f) rb(%.2f)",
-                this.flPower, this.frPower, this.blPower,
+                this.flPower
+                , this.frPower, this.blPower,
                 this.brPower);
         telemetry.addData("Motors", "left back(%d), left front (%d)" +
                 "right back(%d), right front(%d)", lbTrgt-leftBackDrive.getCurrentPosition(), lfTrgt-leftFrontDrive.getCurrentPosition(),rbTrgt-rightBackDrive.getCurrentPosition(),rfTrgt-rightFrontDrive.getCurrentPosition());

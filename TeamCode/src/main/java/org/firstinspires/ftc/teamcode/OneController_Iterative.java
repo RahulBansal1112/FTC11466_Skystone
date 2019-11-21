@@ -67,10 +67,12 @@ public class OneController_Iterative extends OpMode
     private Servo outerPincher;
     private Servo clamper1;
     private Servo clamper2;
+    private Servo foundationMech;
 
     private MecanumMathOps mathOps;
 
-    private boolean driveMode = false; //true = acceleration, false = none
+    private boolean driveMode; //true = acceleration, false = none
+    private double clampPosition;
     //initialize clamp + stuff
 
     /*
@@ -86,6 +88,12 @@ public class OneController_Iterative extends OpMode
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
+        foundationMech = hardwareMap.get(Servo.class, "foundation_mech");
+
+        driveMode = false;
+
+        clampPosition = 0.5;
 
 
         //lift = hardwareMap.get(DcMotor.class, "lift");
@@ -192,6 +200,15 @@ public class OneController_Iterative extends OpMode
         if (gamepad1.x) {
             changeDriveMode();
         }
+        if (gamepad1.left_bumper) {
+            if (clampPosition == 0.5) {
+                clampPosition = 0;
+            }
+            else {
+                clampPosition = 0.5;
+            }
+
+        }
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString()+ " " + gamepad1.left_stick_x + " " + gamepad1.left_stick_y);
@@ -201,6 +218,7 @@ public class OneController_Iterative extends OpMode
                 "lf(%.2f) rf(%.2f) lb(%.2f) rb(%.2f)",
                 mathOps.getFrontLeftMotorP(), mathOps.getFrontRightMotorP(), mathOps.getBackLeftMotorP(),
                 mathOps.getBackRightMotorP());
+        telemetry.addData("Servo Position", clampPosition * 180);
 
         if (driveMode == true) {
             if (gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0 || gamepad1.right_stick_x != 0) {
@@ -213,6 +231,9 @@ public class OneController_Iterative extends OpMode
         else {
             mathOps.updatePowers();
         }
+
+        foundationMech.setPosition(clampPosition);
+
         //mathOps.updatePowersSmoothly(16,0.001);
 
 
