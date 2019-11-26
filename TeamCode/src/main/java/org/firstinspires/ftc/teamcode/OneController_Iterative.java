@@ -201,11 +201,11 @@ public class OneController_Iterative extends OpMode
             changeDriveMode();
         }
         if (gamepad1.left_bumper) {
-            if (clampPosition == 0.5) {
-                clampPosition = 0;
+            if (clampPosition == 0) {
+                clampPosition = 0.5;
             }
             else {
-                clampPosition = 0.5;
+                clampPosition = 0;
             }
 
         }
@@ -253,9 +253,6 @@ public class OneController_Iterative extends OpMode
 
     }
 
-    private boolean getClamp() {
-        return gamepad1.right_bumper;
-    }
     private boolean getPincherOuterOpen() {
         return gamepad1.a;
     }
@@ -263,7 +260,7 @@ public class OneController_Iterative extends OpMode
             return gamepad1.b; //placeholder
         }
     private boolean getPincherInner() {
-        return gamepad1.left_bumper;
+        return gamepad1.right_bumper;
     }
     private boolean getLiftUp() {
         return gamepad1.dpad_up;

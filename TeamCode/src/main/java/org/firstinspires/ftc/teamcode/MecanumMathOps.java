@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class MecanumMathOps {
-    //todo this is only for test chasis
+    //todo this is only for test chassis
     private final double ENCODER_TICKS_PER_INCH = (288./( 4 * Math.PI));
 
 
@@ -239,9 +239,6 @@ public class MecanumMathOps {
         this.blPower = (- x + y)*scalar;
         this.brPower = (x + y)*scalar;
 
-
-
-
         int lbStrt = leftBackDrive.getCurrentPosition();
         int lfStrt = leftFrontDrive.getCurrentPosition();
         int rbStrt = rightBackDrive.getCurrentPosition();
@@ -252,23 +249,17 @@ public class MecanumMathOps {
         int rbTrgt = rightBackDrive.getCurrentPosition() + (int) (ENCODER_TICKS_PER_INCH * inches * this.brPower);
         int rfTrgt = rightFrontDrive.getCurrentPosition() + (int) (ENCODER_TICKS_PER_INCH * inches * this.frPower);
 
-        //int lbTrgt = leftBackDrive.getCurrentPosition() + (int) (calculateCounts(inches) * this.blPower);
-        //int lfTrgt = leftFrontDrive.getCurrentPosition() + (int) (calculateCounts(inches) * this.flPower);
-        //int rbTrgt = rightBackDrive.getCurrentPosition() + (int) (calculateCounts(inches) * this.brPower);
-        //int rfTrgt = rightFrontDrive.getCurrentPosition() + (int) (calculateCounts(inches) * this.frPower);
-
-
         leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
 
         /*
         this.strafeAndTurn(x,y,0);
         this.flPower = Math.abs(this.flPower);
         this.updatePowers();
         */
+
         ElapsedTime runTime = new ElapsedTime();
         double prevTime = runTime.time();
 
