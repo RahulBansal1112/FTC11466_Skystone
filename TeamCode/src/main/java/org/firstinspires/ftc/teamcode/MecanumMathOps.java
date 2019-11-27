@@ -149,6 +149,21 @@ public class MecanumMathOps {
 
     public void initLift() {
 
+        double delta = 1;
+        double prevPosition = lift.getCurrentPosition();
+
+        //move it down at a really low power, check if the encoder is changing, if not, reset encoder
+
+        while (delta != 0) {
+
+            lift.setPower(-0.1);
+            delta = lift.getCurrentPosition() - prevPosition;
+            prevPosition = lift.getCurrentPosition();
+
+        }
+
+        lift.setPower(0);
+
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
     }

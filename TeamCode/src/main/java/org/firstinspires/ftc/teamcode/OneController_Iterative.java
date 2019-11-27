@@ -73,6 +73,8 @@ public class OneController_Iterative extends OpMode
 
     private boolean driveMode; //true = acceleration, false = none
     private double clampPosition;
+    private static final double MAX_POSITION = 1.0;
+    private static final double MIN_POSITION = 0.0;
     //initialize clamp + stuff
 
     /*
@@ -200,13 +202,10 @@ public class OneController_Iterative extends OpMode
         if (gamepad1.x) {
             changeDriveMode();
         }
+
         if (gamepad1.left_bumper) {
-            if (clampPosition == 0) {
-                clampPosition = 0.5;
-            }
-            else {
-                clampPosition = 0;
-            }
+
+            clampPosition = 0;
 
         }
 
@@ -218,7 +217,7 @@ public class OneController_Iterative extends OpMode
                 "lf(%.2f) rf(%.2f) lb(%.2f) rb(%.2f)",
                 mathOps.getFrontLeftMotorP(), mathOps.getFrontRightMotorP(), mathOps.getBackLeftMotorP(),
                 mathOps.getBackRightMotorP());
-        telemetry.addData("Servo Position", clampPosition * 180);
+        telemetry.addData("Servo Position", foundationMech.getPosition());
 
         if (driveMode == true) {
             if (gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0 || gamepad1.right_stick_x != 0) {
@@ -232,7 +231,7 @@ public class OneController_Iterative extends OpMode
             mathOps.updatePowers();
         }
 
-        foundationMech.setPosition(clampPosition);
+        foundationMech.setPosition(Range.clip(clampPosition, MIN_POSITION, MAX_POSITION));
 
         //mathOps.updatePowersSmoothly(16,0.001);
 
