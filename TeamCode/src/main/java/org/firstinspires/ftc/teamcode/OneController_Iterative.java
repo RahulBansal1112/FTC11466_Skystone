@@ -73,10 +73,12 @@ public class OneController_Iterative extends OpMode
 
     private boolean driveMode; //true = acceleration, false = none
     private double clampPosition;
-    private static final double MAX_POSITION = 1.0;
-    private static final double MIN_POSITION = 0.0;
-    //initialize clamp + stuff
+    private static final double MAX_POSITION = 0.5;
+    private static final double MIN_POSITION = 0;
 
+    //if the left bumper was pressed last frame
+    private boolean leftBumperPressed = false;
+    //initialize clamp + stuff
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -203,11 +205,23 @@ public class OneController_Iterative extends OpMode
             changeDriveMode();
         }
 
-        if (gamepad1.left_bumper) {
+        if (gamepad1.left_bumper && ! this.leftBumperPressed) {
 
-            clampPosition = 0;
+            if (Math.abs(foundationMech.getPosition() - MIN_POSITION) < Math.abs(foundationMech.getPosition() - MAX_POSITION)) {
+                clampPosition = MAX_POSITION;
+                telemetry.addData("Foundation:",true + " MAX" );
 
+            }
+            else {
+                clampPosition = MIN_POSITION;
+                telemetry.addData("Foundation:",true + " MINIMUM" );
+
+            }
+        }else {
+            telemetry.addData("Foundation:",false);
         }
+        leftBumperPressed = gamepad1.left_bumper;
+
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString()+ " " + gamepad1.left_stick_x + " " + gamepad1.left_stick_y);
@@ -231,7 +245,7 @@ public class OneController_Iterative extends OpMode
             mathOps.updatePowers();
         }
 
-        foundationMech.setPosition(Range.clip(clampPosition, MIN_POSITION, MAX_POSITION));
+        foundationMech.setPosition(clampPosition);
 
         //mathOps.updatePowersSmoothly(16,0.001);
 
