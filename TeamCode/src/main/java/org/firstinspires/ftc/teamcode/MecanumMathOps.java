@@ -11,8 +11,10 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class MecanumMathOps {
     //todo this is only for test chassis
-    private final double ENCODER_TICKS_PER_INCH = (288./( 4 * Math.PI));
+    private final double ENCODER_TICKS_PER_INCH = (288./(2/6* 4 * Math.PI));
+    private final double LIFT_GEAR_RATIO = 1./80;
 
+    private final double MAX_ENCODER_LIFT_TICKS = (1150);
 
     //See if we can make all the methods static (probably not)?
     private double speed = 1.0;
@@ -29,7 +31,7 @@ public class MecanumMathOps {
     private DcMotor leftBackDrive;
     private DcMotor rightBackDrive;
 
-    private DcMotor lift;
+    private DcMotor liftVertical;
 
     //powers
     private double flPower = 0;
@@ -63,12 +65,12 @@ public class MecanumMathOps {
 
     }
 
-    public MecanumMathOps(DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack, Telemetry telemetry){
+    public MecanumMathOps(DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack, DcMotor liftVertical, Telemetry telemetry){
         this.leftFrontDrive = leftFront;
         this.rightFrontDrive = rightFront;
         this.leftBackDrive  = leftBack;
         this.rightBackDrive = rightBack;
-        //this.lift = lift;
+        this.liftVertical = liftVertical;
         this.telemetry = telemetry;
 
 
@@ -148,46 +150,52 @@ public class MecanumMathOps {
     }
 
     public void initLift() {
-
+/*
         double delta = 1;
-        double prevPosition = lift.getCurrentPosition();
+        double prevPosition = liftVertical.getCurrentPosition();
 
         //move it down at a really low power, check if the encoder is changing, if not, reset encoder
 
         while (delta != 0) {
 
-            lift.setPower(-0.1);
-            delta = lift.getCurrentPosition() - prevPosition;
-            prevPosition = lift.getCurrentPosition();
+            liftVertical.setPower(-0.1);
+            delta = liftVertical.getCurrentPosition() - prevPosition;
+            prevPosition = liftVertical.getCurrentPosition();
 
         }
+*/
+        liftVertical.setPower(0);
 
-        lift.setPower(0);
-
-        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftVertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        telemetry.addData("Lift direction: ", "STILL");
+        liftVertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
 
     public void moveLiftDown(double power) {
 
-        //amount of revs needed to go from lift start to end: ~3
+        //amount of revs needed to go from lift start to end: ~4.25
 
-        if (this.lift.getCurrentPosition() >= 288 * 0.25) {
-            this.liftPower = -power;
+        if (-this.liftVertical.getCurrentPosition() <= 10) {
+            this.liftPower = 0; //should fix telemetry here
+            telemetry.addData("Lift direction: ", "down - cancelled");
         }
         else {
             this.liftPower = power;
+            telemetry.addData("Lift direction: ", "down");
         }
 
     }
 
     public void moveLiftUp(double power) {
 
-        if (this.lift.getCurrentPosition() <= 288 * 2.5) {
-            this.liftPower = power;
+        if (-this.liftVertical.getCurrentPosition() >= MAX_ENCODER_LIFT_TICKS - 10) {
+            this.liftPower = 0;
+            telemetry.addData("Lift direction: ", "up - cancelled");
         }
         else {
             this.liftPower = -power;
+            telemetry.addData("Lift direction: ", "up");
         }
 
     }
@@ -421,6 +429,7 @@ public class MecanumMathOps {
         this.pFrPower = frPower;
         this.pBrPower = brPower;
         //this.pLiftPower = liftPower;
+        this.liftVertical.setPower(this.liftPower);
 
     }
 
@@ -437,6 +446,7 @@ public class MecanumMathOps {
         this.leftBackDrive.setPower(this.pBlPower);
         //this.lift.setPower(this.pLiftPower);
 
+        this.liftVertical.setPower(this.liftPower);
     }
 
 

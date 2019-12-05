@@ -62,7 +62,7 @@ public class OneController_Iterative extends OpMode
     private DcMotor rightFrontDrive;
     private DcMotor leftBackDrive;
     private DcMotor rightBackDrive;
-    private DcMotor liftMotor;
+    private DcMotor liftVertical;
     private Servo innerPincher;
     private Servo outerPincher;
     private Servo clamper1;
@@ -73,7 +73,7 @@ public class OneController_Iterative extends OpMode
 
     private boolean driveMode; //true = acceleration, false = none
     private double clampPosition;
-    private static final double MAX_POSITION = 0.5;
+    private static final double MAX_POSITION = 1;
     private static final double MIN_POSITION = 0;
 
     //if the left bumper was pressed last frame
@@ -97,11 +97,11 @@ public class OneController_Iterative extends OpMode
 
         driveMode = false;
 
-        clampPosition = 0.5;
+        clampPosition = MIN_POSITION;
 
 
-        //lift = hardwareMap.get(DcMotor.class, "lift");
-        //mathOps.initLift(); //MAKE SURE THE LIFT IS ALL THE WAY DOWN WHEN STARTING.
+        liftVertical = hardwareMap.get(DcMotor.class, "lift_vertical");
+       // mathOps.initLift(); //MAKE SURE THE LIFT IS ALL THE WAY DOWN WHEN STARTING.
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -112,8 +112,9 @@ public class OneController_Iterative extends OpMode
         innerPincher = hardwareMap.get(Servo.class, "innerPincher");
         outerPincher = hardwareMap.get(Servo.class, "outerPincher");*/
 
-        mathOps = new MecanumMathOps(leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive,telemetry);
+        mathOps = new MecanumMathOps(leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive,liftVertical, telemetry);
 
+        mathOps.initLift();
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
     }
@@ -143,18 +144,21 @@ public class OneController_Iterative extends OpMode
     public void loop() {
 
         mathOps.strafeAndTurn(gamepad1.left_stick_x,-gamepad1.left_stick_y, gamepad1.right_stick_x);
-        //if (getLiftDown()) {
+        if (getLiftDown()) {
 
-            //mathOps.moveLiftDown(0.25);
-            //telemetry.addData("Lift direction: ", "down");
+            mathOps.moveLiftDown(0.25);
+            telemetry.addData("Lift direction: ", "down");
 
-        //}
-        //else if (getLiftUp()) {
+        }
+        else if (getLiftUp()) {
 
-            //mathOps.moveLiftUp(0.25);
-            //telemetry.addData("Lift direction: ", "up");
+            mathOps.moveLiftUp(0.25);
+            telemetry.addData("Lift direction: ", "up");
 
-        //}
+        } else {
+            mathOps.moveLiftDown(0);
+            telemetry.addData("Lift direction: ", "STILL");
+        }
 
         /*
         // If the user presses the right bumper and any of the clamps are outside the chassis, bring
@@ -232,6 +236,7 @@ public class OneController_Iterative extends OpMode
                 mathOps.getFrontLeftMotorP(), mathOps.getFrontRightMotorP(), mathOps.getBackLeftMotorP(),
                 mathOps.getBackRightMotorP());
         telemetry.addData("Servo Position", foundationMech.getPosition());
+        telemetry.addData("Lift Position", -liftVertical.getCurrentPosition());
 
         if (driveMode == true) {
             if (gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0 || gamepad1.right_stick_x != 0) {
