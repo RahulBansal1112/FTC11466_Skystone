@@ -29,14 +29,11 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -63,8 +60,9 @@ public class OneController_Iterative extends OpMode
     private DcMotor leftBackDrive;
     private DcMotor rightBackDrive;
     private DcMotor liftVertical;
-    private Servo innerPincher;
-    private Servo outerPincher;
+    private DcMotor liftAngle;
+    private Servo pincher;
+    //private Servo outerPincher;
     private Servo clamper1;
     private Servo clamper2;
     private Servo foundationMech;
@@ -73,11 +71,18 @@ public class OneController_Iterative extends OpMode
 
     private boolean driveMode; //true = acceleration, false = none
     private double clampPosition;
+    private double pincherPosition;
     private static final double MAX_POSITION = 1;
     private static final double MIN_POSITION = 0;
-
+    private static final double MIN_PINCHER_POSITION = 0.65;
+    private static final double MIN_LIFT_ANGLE = 0;
+    private static final double MAX_LIFT_ANGLE = 45;
     //if the left bumper was pressed last frame
     private boolean leftBumperPressed = false;
+    private boolean rightBumperPressed = false;
+    private boolean aPrevPressed = false;
+
+    private double liftAngleTarget = 0;
     //initialize clamp + stuff
     /*
      * Code to run ONCE when the driver hits INIT
@@ -94,13 +99,16 @@ public class OneController_Iterative extends OpMode
         leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
         foundationMech = hardwareMap.get(Servo.class, "foundation_mech");
+        pincher = hardwareMap.get(Servo.class, "pincher");
 
         driveMode = false;
 
         clampPosition = MIN_POSITION;
+        pincherPosition = MAX_POSITION;
 
 
         liftVertical = hardwareMap.get(DcMotor.class, "lift_vertical");
+        liftAngle = hardwareMap.get(DcMotor.class, "lift_angle");
        // mathOps.initLift(); //MAKE SURE THE LIFT IS ALL THE WAY DOWN WHEN STARTING.
 
         // Most robots need the motor on one side to be reversed to drive forward
@@ -112,9 +120,10 @@ public class OneController_Iterative extends OpMode
         innerPincher = hardwareMap.get(Servo.class, "innerPincher");
         outerPincher = hardwareMap.get(Servo.class, "outerPincher");*/
 
-        mathOps = new MecanumMathOps(leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive,liftVertical, telemetry);
+        mathOps = new MecanumMathOps(leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive,liftVertical, liftAngle, telemetry);
 
-        mathOps.initLift();
+        mathOps.initLift(); //Assume the lift is all the way down.
+        mathOps.initAngle(); //Assume the lift is straight up.
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
     }
@@ -194,13 +203,6 @@ public class OneController_Iterative extends OpMode
             outerPincher.setPosition(90);//CLOSED?
         }
         /*
-        // The last two if-statements won't work because we have to set the run mode
-        if(this.moveLiftUp()){
-            liftMotor.setTargetPosition(liftMotor.getCurrentPosition() - 1);
-        }
-        if(this.moveLiftDown()){
-            liftMotor.setTargetPosition(liftMotor.getCurrentPosition() + 1);//see what this means
-        } todo add this to the config file
 
         */
 
@@ -225,6 +227,39 @@ public class OneController_Iterative extends OpMode
             telemetry.addData("Foundation:",false);
         }
         leftBumperPressed = gamepad1.left_bumper;
+
+        if (gamepad1.right_bumper && ! this.rightBumperPressed) {
+            double mintarget = MIN_POSITION * MecanumMathOps.LIFT_TICKS_PER_REVOLUTION / 360;
+            double maxtarget = MAX_POSITION * MecanumMathOps.LIFT_TICKS_PER_REVOLUTION / 360;
+
+            if (Math.abs(liftAngle.getCurrentPosition() - maxtarget) > Math.abs(liftAngle.getCurrentPosition()-mintarget)){
+                this.liftAngleTarget = MAX_LIFT_ANGLE;
+            } else {
+                this.liftAngleTarget = MIN_LIFT_ANGLE;
+            }
+
+        }
+        mathOps.moveLiftAngle(this.liftAngleTarget);
+
+        rightBumperPressed = gamepad1.right_bumper;
+
+        if (gamepad1.a && ! this.aPrevPressed) {
+
+            if (Math.abs(pincher.getPosition() - MIN_PINCHER_POSITION) < Math.abs(pincher.getPosition() - MAX_POSITION)) {
+                pincherPosition = MAX_POSITION;
+                telemetry.addData("Pincher:",true + " MAX" );
+
+            }
+            else {
+                pincherPosition = MIN_PINCHER_POSITION;
+                telemetry.addData("Pincher:",true + " MINIMUM" );
+
+            }
+        }else {
+            telemetry.addData("Pincher:",false);
+        }
+        this.aPrevPressed = gamepad1.a;
+
 
 
         // Show the elapsed game time and wheel power.
@@ -251,6 +286,7 @@ public class OneController_Iterative extends OpMode
         }
 
         foundationMech.setPosition(clampPosition);
+        pincher.setPosition(pincherPosition);
 
         //mathOps.updatePowersSmoothly(16,0.001);
 
@@ -276,9 +312,6 @@ public class OneController_Iterative extends OpMode
     }
     private boolean getPincherOuterClose() {
             return gamepad1.b; //placeholder
-        }
-    private boolean getPincherInner() {
-        return gamepad1.right_bumper;
     }
     private boolean getLiftUp() {
         return gamepad1.dpad_up;
@@ -286,9 +319,10 @@ public class OneController_Iterative extends OpMode
     private boolean getLiftDown() {
         return gamepad1.dpad_down;
     }
-    private void moveLiftUp() {
-
+    private boolean getLiftAngle() {
+        return gamepad1.right_bumper;
     }
+
 
 }
 

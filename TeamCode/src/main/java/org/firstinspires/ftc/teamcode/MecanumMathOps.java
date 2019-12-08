@@ -13,6 +13,7 @@ public class MecanumMathOps {
     //todo this is only for test chassis
     private final double ENCODER_TICKS_PER_INCH = (288./(2/6* 4 * Math.PI));
     private final double LIFT_GEAR_RATIO = 1./80;
+    public static double LIFT_TICKS_PER_REVOLUTION = 2240;
 
     private final double MAX_ENCODER_LIFT_TICKS = (1150);
 
@@ -32,6 +33,7 @@ public class MecanumMathOps {
     private DcMotor rightBackDrive;
 
     private DcMotor liftVertical;
+    private DcMotor liftAngle;
 
     //powers
     private double flPower = 0;
@@ -65,12 +67,13 @@ public class MecanumMathOps {
 
     }
 
-    public MecanumMathOps(DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack, DcMotor liftVertical, Telemetry telemetry){
+    public MecanumMathOps(DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack, DcMotor liftVertical, DcMotor liftAngle, Telemetry telemetry){
         this.leftFrontDrive = leftFront;
         this.rightFrontDrive = rightFront;
         this.leftBackDrive  = leftBack;
         this.rightBackDrive = rightBack;
         this.liftVertical = liftVertical;
+        this.liftAngle = liftAngle;
         this.telemetry = telemetry;
 
 
@@ -172,6 +175,17 @@ public class MecanumMathOps {
 
     }
 
+    public void initAngle() {
+
+        liftAngle.setPower(0);
+
+
+
+        liftAngle.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftAngle.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    }
+
     public void moveLiftDown(double power) {
 
         //amount of revs needed to go from lift start to end: ~4.25
@@ -197,6 +211,29 @@ public class MecanumMathOps {
             this.liftPower = -power;
             telemetry.addData("Lift direction: ", "up");
         }
+
+    }
+
+    public void moveLiftAngle(double angle) {
+        double tolerance = 20;
+        double target =  angle* LIFT_TICKS_PER_REVOLUTION / 360 ;
+        double speed = 0;
+        if (Math.abs(liftAngle.getCurrentPosition() - target) < tolerance){
+            telemetry.addData("Lift Angle Motor","WIthin range " + liftAngle.getCurrentPosition() + " TARGET: " + target);
+            return;
+        }
+
+        if (liftAngle.getCurrentPosition() < target) {
+            speed = 0.5;
+            telemetry.addData("Lift Angle Motor","LESS THAN TARGET: " + liftAngle.getCurrentPosition() + " TARGET: " + target);
+        } else {
+            speed = -0.5;
+        telemetry.addData("Lift Angle Motor","GREATER THAN TARGET: " + liftAngle.getCurrentPosition() + " TARGET: " + target);
+
+        }
+
+        this.liftAngle.setPower(speed);
+
 
     }
 
