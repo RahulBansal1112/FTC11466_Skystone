@@ -232,7 +232,7 @@ public class OneController_Iterative extends OpMode
             double mintarget = MIN_POSITION * MecanumMathOps.LIFT_TICKS_PER_REVOLUTION / 360;
             double maxtarget = MAX_POSITION * MecanumMathOps.LIFT_TICKS_PER_REVOLUTION / 360;
 
-            if (Math.abs(liftAngle.getCurrentPosition() - maxtarget) > Math.abs(liftAngle.getCurrentPosition()-mintarget)){
+            if (Math.abs(maxtarget) > Math.abs(mintarget)){
                 this.liftAngleTarget = MAX_LIFT_ANGLE;
             } else {
                 this.liftAngleTarget = MIN_LIFT_ANGLE;
