@@ -450,7 +450,7 @@ public class MecanumMathOps {
     }
 
     public void turnDegrees(double r){
-
+        this.strafeAndTurn(0, 0, r);
     }
 
 
