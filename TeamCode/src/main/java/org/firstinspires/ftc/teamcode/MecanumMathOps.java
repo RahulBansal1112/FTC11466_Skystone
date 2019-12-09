@@ -116,6 +116,7 @@ public class MecanumMathOps {
 
     public void moveForTime(long milliseconds){
         this.timeMoving = milliseconds;
+        this.updatePowers();
     }//update so it's intuitive
 
     public boolean isAccelerating(){
