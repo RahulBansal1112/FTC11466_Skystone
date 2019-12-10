@@ -30,14 +30,11 @@ package org.firstinspires.ftc.teamcode;
  */
 
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 
 /**
@@ -53,8 +50,8 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="SkystoneMover_LinearOpMode", group="Linear Opmode")
-public class SkystoneMover_LinearOpMode extends LinearOpMode {
+@Autonomous(name="FoundationMover_LinearOpMode", group="Linear Opmode")
+public class FoundationMover_LinearOpMode extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -120,7 +117,6 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         //go back
         //repeat
         //specifics later
-
         /*mathOps.moveForAWhile(1000,0,1,0,1);
         mathOps.strafeAndTurn(0,0,0);
         mathOps.updatePowers();
@@ -146,8 +142,8 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         //mathOps.updatePowers();
 
         //sleep(1000);
-        mathOps.moveInches(24, 1, 0);
-        mathOps.strafeAndTurn(0,0,0);
+        mathOps.moveInches(31.25, 0, -1);
+        mathOps.strafeAndTurn(0, 0, 0);
         mathOps.updatePowers();
         sleep(1000);
         /*mathOps.moveInches(12, 0, -1);

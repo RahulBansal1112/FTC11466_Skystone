@@ -49,6 +49,7 @@ public class MecanumMathOps {
     private double pLiftPower = 0;
 
     private SkystoneMover_LinearOpMode mover;
+    private FoundationMover_LinearOpMode foundation;
 
     public MecanumMathOps(SkystoneMover_LinearOpMode mover, DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack, Telemetry telemetry){
         this.leftFrontDrive = leftFront;
@@ -59,6 +60,23 @@ public class MecanumMathOps {
 
         this.telemetry = telemetry;
         this.mover = mover;
+
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+
+    }
+
+    public MecanumMathOps(FoundationMover_LinearOpMode foundation, DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack, Telemetry telemetry){
+        this.leftFrontDrive = leftFront;
+        this.rightFrontDrive = rightFront;
+        this.leftBackDrive  = leftBack;
+        this.rightBackDrive = rightBack;
+        //this.lift = lift;
+
+        this.telemetry = telemetry;
+        this.foundation = foundation;
 
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -180,8 +198,6 @@ public class MecanumMathOps {
 
         liftAngle.setPower(0);
 
-
-
         liftAngle.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftAngle.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -218,22 +234,35 @@ public class MecanumMathOps {
     public void moveLiftAngle(double angle) {
         double tolerance = 20;
         double target =  angle* LIFT_TICKS_PER_REVOLUTION / 360 ;
-        double speed = 0;
+        double speed;
+
+        telemetry.addData("Lift Angle Motor","Run type:" + liftAngle.getMode());
         if (Math.abs(liftAngle.getCurrentPosition() - target) < tolerance){
             telemetry.addData("Lift Angle Motor","WIthin range " + liftAngle.getCurrentPosition() + " TARGET: " + target);
             return;
         }
 
         if (liftAngle.getCurrentPosition() < target) {
-            speed = 0.5;
+            speed = Math.min (1, (target - liftAngle.getCurrentPosition())/LIFT_TICKS_PER_REVOLUTION);
             telemetry.addData("Lift Angle Motor","LESS THAN TARGET: " + liftAngle.getCurrentPosition() + " TARGET: " + target);
-        } else {
-            speed = -0.5;
-        telemetry.addData("Lift Angle Motor","GREATER THAN TARGET: " + liftAngle.getCurrentPosition() + " TARGET: " + target);
+            if (speed < 0.05) {
 
+                speed = 0.05;
+
+            }
+
+        } else {
+            speed = Math.max(-1,(target - liftAngle.getCurrentPosition())/LIFT_TICKS_PER_REVOLUTION);
+            telemetry.addData("Lift Angle Motor","GREATER THAN TARGET: " + liftAngle.getCurrentPosition() + " TARGET: " + target);
+            if (speed > -0.05) {
+
+                speed = -0.05;
+
+            }
         }
 
         this.liftAngle.setPower(speed);
+
 
 
     }
@@ -336,7 +365,7 @@ public class MecanumMathOps {
                 Math.abs(rfTrgt-rfStrt) +
                 Math.abs(lfTrgt-lfStrt)+
                 Math.abs(lbTrgt-lbStrt)))
-        && mover.opModeIsActive()) {
+        && (mover.opModeIsActive()|| foundation.opModeIsActive())) {
             scalar = 1/Math.hypot(x,y);
             this.flPower = (x + y)*scalar;
             this.frPower = (- x + y)*scalar;

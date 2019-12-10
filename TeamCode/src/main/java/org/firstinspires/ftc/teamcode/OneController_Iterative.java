@@ -74,13 +74,16 @@ public class OneController_Iterative extends OpMode
     private double pincherPosition;
     private static final double MAX_POSITION = 1;
     private static final double MIN_POSITION = 0;
-    private static final double MIN_PINCHER_POSITION = 0.65;
+    private static final double MIN_PINCHER_POSITION = 0.7;
     private static final double MIN_LIFT_ANGLE = 0;
     private static final double MAX_LIFT_ANGLE = 45;
     //if the left bumper was pressed last frame
     private boolean leftBumperPressed = false;
     private boolean rightBumperPressed = false;
     private boolean aPrevPressed = false;
+    private boolean bPrevPressed = false;
+
+    private double lift;
 
     private double liftAngleTarget = 0;
     //initialize clamp + stuff
@@ -102,6 +105,8 @@ public class OneController_Iterative extends OpMode
         pincher = hardwareMap.get(Servo.class, "pincher");
 
         driveMode = false;
+
+        double lift;
 
         clampPosition = MIN_POSITION;
         pincherPosition = MAX_POSITION;
@@ -152,16 +157,17 @@ public class OneController_Iterative extends OpMode
     @Override
     public void loop() {
 
+        double lift = getLift();
         mathOps.strafeAndTurn(gamepad1.left_stick_x,-gamepad1.left_stick_y, gamepad1.right_stick_x);
-        if (getLiftDown()) {
+        if (lift < 0) {
 
-            mathOps.moveLiftDown(0.25);
+            mathOps.moveLiftDown(Math.abs(lift));
             telemetry.addData("Lift direction: ", "down");
 
         }
-        else if (getLiftUp()) {
+        else if (lift > 0) {
 
-            mathOps.moveLiftUp(0.25);
+            mathOps.moveLiftUp(Math.abs(lift));
             telemetry.addData("Lift direction: ", "up");
 
         } else {
@@ -211,7 +217,7 @@ public class OneController_Iterative extends OpMode
             changeDriveMode();
         }
 
-        if (gamepad1.left_bumper && ! this.leftBumperPressed) {
+        if (gamepad2.left_bumper && ! this.leftBumperPressed) {
 
             if (Math.abs(foundationMech.getPosition() - MIN_POSITION) < Math.abs(foundationMech.getPosition() - MAX_POSITION)) {
                 clampPosition = MAX_POSITION;
@@ -226,9 +232,10 @@ public class OneController_Iterative extends OpMode
         }else {
             telemetry.addData("Foundation:",false);
         }
-        leftBumperPressed = gamepad1.left_bumper;
+        leftBumperPressed = gamepad2.left_bumper;
 
-        if (gamepad1.right_bumper && ! this.rightBumperPressed) {
+        /*
+        if (gamepad2.a && ! this.aPrevPressed) {
             double mintarget = MIN_POSITION * MecanumMathOps.LIFT_TICKS_PER_REVOLUTION / 360;
             double maxtarget = MAX_POSITION * MecanumMathOps.LIFT_TICKS_PER_REVOLUTION / 360;
 
@@ -239,11 +246,23 @@ public class OneController_Iterative extends OpMode
             }
 
         }
-        mathOps.moveLiftAngle(this.liftAngleTarget);
+        */
+        liftAngle.setPower(gamepad2.left_stick_x * 0.15);
 
-        rightBumperPressed = gamepad1.right_bumper;
+        /*
+        if (gamepad2.b && this.bPrevPressed) {
 
-        if (gamepad1.a && ! this.aPrevPressed) {
+            liftAngle.setPower(0);
+
+        }
+
+        bPrevPressed = gamepad2.b;
+*/
+        //mathOps.moveLiftAngle(this.liftAngleTarget);
+
+        this.aPrevPressed = gamepad2.a;
+
+        if (gamepad2.right_bumper && ! this.rightBumperPressed) {
 
             if (Math.abs(pincher.getPosition() - MIN_PINCHER_POSITION) < Math.abs(pincher.getPosition() - MAX_POSITION)) {
                 pincherPosition = MAX_POSITION;
@@ -258,7 +277,10 @@ public class OneController_Iterative extends OpMode
         }else {
             telemetry.addData("Pincher:",false);
         }
-        this.aPrevPressed = gamepad1.a;
+
+
+
+        rightBumperPressed = gamepad1.right_bumper;
 
 
 
@@ -272,6 +294,7 @@ public class OneController_Iterative extends OpMode
                 mathOps.getBackRightMotorP());
         telemetry.addData("Servo Position", foundationMech.getPosition());
         telemetry.addData("Lift Position", -liftVertical.getCurrentPosition());
+        telemetry.addData("Lift Angle Motor","Position " + liftAngle.getCurrentPosition());
 
         if (driveMode == true) {
             if (gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0 || gamepad1.right_stick_x != 0) {
@@ -313,11 +336,8 @@ public class OneController_Iterative extends OpMode
     private boolean getPincherOuterClose() {
             return gamepad1.b; //placeholder
     }
-    private boolean getLiftUp() {
-        return gamepad1.dpad_up;
-    }
-    private boolean getLiftDown() {
-        return gamepad1.dpad_down;
+    private double getLift() {
+        return -gamepad2.right_stick_y;
     }
     private boolean getLiftAngle() {
         return gamepad1.right_bumper;
