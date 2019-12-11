@@ -46,11 +46,12 @@ public class MecanumMathOps {
     private double pBrPower = 0;
     private double pLiftPower = 0;
 
-    private SkystoneMover_LinearOpMode mover;
     private Blue_FoundationMover_LinearOpMode blueFoundation;
     private Red_FoundationMover_LinearOpMode redFoundation;
+    private Red_SkystoneMover_LinearOpMode redSkyStone;
+    private Blue_SkystoneMover_LinearOpMode blueSkyStone;
 
-    public MecanumMathOps(SkystoneMover_LinearOpMode mover, DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack, Telemetry telemetry){
+    public MecanumMathOps(Red_SkystoneMover_LinearOpMode redSkyStone, DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack, Telemetry telemetry){
         this.leftFrontDrive = leftFront;
         this.rightFrontDrive = rightFront;
         this.leftBackDrive  = leftBack;
@@ -58,7 +59,24 @@ public class MecanumMathOps {
         //this.lift = lift;
 
         this.telemetry = telemetry;
-        this.mover = mover;
+        this.redSkyStone = redSkyStone;
+
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+
+    }
+
+    public MecanumMathOps(Blue_SkystoneMover_LinearOpMode blueSkyStone, DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack, Telemetry telemetry){
+        this.leftFrontDrive = leftFront;
+        this.rightFrontDrive = rightFront;
+        this.leftBackDrive  = leftBack;
+        this.rightBackDrive = rightBack;
+        //this.lift = lift;
+
+        this.telemetry = telemetry;
+        this.blueSkyStone = blueSkyStone;
 
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -383,7 +401,8 @@ public class MecanumMathOps {
                 Math.abs(rfTrgt-rfStrt) +
                 Math.abs(lfTrgt-lfStrt)+
                 Math.abs(lbTrgt-lbStrt)))
-        && (mover.opModeIsActive()|| blueFoundation.opModeIsActive() || redFoundation.opModeIsActive())) {
+        && (blueFoundation.opModeIsActive() || redFoundation.opModeIsActive()
+        || blueSkyStone.opModeIsActive() || redSkyStone.opModeIsActive())) {
             scalar = 1/Math.hypot(x,y);
             this.flPower = (x + y)*scalar;
             this.frPower = (- x + y)*scalar;

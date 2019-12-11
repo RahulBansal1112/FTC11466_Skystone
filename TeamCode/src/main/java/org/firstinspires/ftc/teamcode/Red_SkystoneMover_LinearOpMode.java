@@ -30,14 +30,11 @@ package org.firstinspires.ftc.teamcode;
  */
 
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 
 /**
@@ -53,8 +50,8 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="SkystoneMover_LinearOpMode", group="Linear Opmode")
-public class SkystoneMover_LinearOpMode extends LinearOpMode {
+@Autonomous(name="Red_SkystoneMover_LinearOpMode", group="Linear Opmode")
+public class Red_SkystoneMover_LinearOpMode extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -62,11 +59,16 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
     private DcMotor rightFrontDrive;
     private DcMotor leftBackDrive;
     private DcMotor rightBackDrive;
-    private DcMotor liftMotor;
-    private Servo innerPincher;
-    private Servo outerPincher;
-    private Servo clamper1;
-    private Servo clamper2;
+    private DcMotor liftVertical;
+    private DcMotor liftAngle;
+    private Servo pincher;
+    private Servo foundationMech;
+
+    private double clampPosition;
+    private double pincherPosition;
+    private static final double MAX_POSITION = 1;
+    private static final double MIN_POSITION = 0;
+    private static final double MIN_PINCHER_POSITION = 0.7;
 
     @Override
 
@@ -84,6 +86,10 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class,"right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class,"right_back_drive");
+        foundationMech = hardwareMap.get(Servo.class, "foundation_mech");
+        pincher = hardwareMap.get(Servo.class, "pincher");
+        liftVertical = hardwareMap.get(DcMotor.class, "lift_vertical");
+        liftAngle = hardwareMap.get(DcMotor.class, "lift_angle");
 
         //liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
 
@@ -98,6 +104,12 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         */
 
         MecanumMathOps mathOps = new MecanumMathOps(this, leftFrontDrive,leftBackDrive,rightFrontDrive,rightBackDrive,telemetry);
+
+        clampPosition = MIN_POSITION;
+        pincherPosition = MAX_POSITION; //make sure this is open or closed?
+
+        mathOps.initLift(); //Assume the lift is all the way down.
+        mathOps.initAngle(); //Assume the lift is straight up.
 
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -146,10 +158,45 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
         //mathOps.updatePowers();
 
         //sleep(1000);
-        mathOps.moveInches(24, 1, 0);
+        //move to first stone. start lift straight up if possible and pincher open.
+        mathOps.moveInches(30, 0, 1); //arbitrary distance for now as we haven't taken exact measurements
         mathOps.strafeAndTurn(0,0,0);
         mathOps.updatePowers();
-        sleep(1000);
+        //close the pincher
+        pincher.setPosition(MIN_PINCHER_POSITION);
+        //how the hell do we tilt the lift back without encoders?? replace this later.
+        //scoot back a little so we don't crash into the side of the bridge or smth
+        mathOps.moveInches(15, 0, -1); //more arbitrary distances
+        mathOps.strafeAndTurn(0,0,0);
+        mathOps.updatePowers();
+        //drive under the bridge
+        mathOps.moveInches(48, 1, 0); //more arbitrary distances
+        mathOps.strafeAndTurn(0,0,0);
+        mathOps.updatePowers();
+        //tilt the lift forward
+        //drop the block
+        pincher.setPosition(MAX_POSITION);
+        //move to the next stone
+        mathOps.moveInches(56, -1, 0); //more arbitrary distances
+        mathOps.strafeAndTurn(0,0,0);
+        mathOps.updatePowers();
+        mathOps.moveInches(15, 0, 1); //more arbitrary distances
+        mathOps.strafeAndTurn(0,0,0);
+        mathOps.updatePowers();
+        //grab block
+        pincher.setPosition(MIN_PINCHER_POSITION);
+        //tilt lift back
+        //scoot back again
+        mathOps.moveInches(15, 0, -1); //more arbitrary distances
+        mathOps.strafeAndTurn(0,0,0);
+        mathOps.updatePowers();
+        //drive under the bridge
+        mathOps.moveInches(64, 1, 0); //more arbitrary distances
+        mathOps.strafeAndTurn(0,0,0);
+        mathOps.updatePowers();
+        //for now there's only two cycles, but we can add more depending on how quickly the robot does them
+
+
         /*mathOps.moveInches(12, 0, -1);
         mathOps.strafeAndTurn(0,0,0);
         mathOps.updatePowers();
@@ -200,7 +247,7 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
                 "right back(%.2f), right front(%.2f)", leftBackPower, leftFrontPower, rightBackPower, rightFrontPower);
         telemetry.update();
     }
-
+    /*
     private void switchClampPosition(){
         if (this.clamper1.getPosition() < 90 && this.clamper2.getPosition() < 90) {//OPen?
             this.clamper1.setPosition(180);//closed?
@@ -227,4 +274,5 @@ public class SkystoneMover_LinearOpMode extends LinearOpMode {
             outerPincher.setPosition(90);
         }
     }
+    */
 }
