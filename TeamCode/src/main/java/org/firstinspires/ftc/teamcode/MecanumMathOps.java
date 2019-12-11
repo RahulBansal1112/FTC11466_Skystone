@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.robocol.RobocolParsable;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -48,9 +46,12 @@ public class MecanumMathOps {
     private double pBrPower = 0;
     private double pLiftPower = 0;
 
-    private SkystoneMover_LinearOpMode mover;
+    private Blue_FoundationMover_LinearOpMode blueFoundation;
+    private Red_FoundationMover_LinearOpMode redFoundation;
+    private Red_SkystoneMover_LinearOpMode redSkyStone;
+    private Blue_SkystoneMover_LinearOpMode blueSkyStone;
 
-    public MecanumMathOps(SkystoneMover_LinearOpMode mover, DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack, Telemetry telemetry){
+    public MecanumMathOps(Red_SkystoneMover_LinearOpMode redSkyStone, DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack, Telemetry telemetry){
         this.leftFrontDrive = leftFront;
         this.rightFrontDrive = rightFront;
         this.leftBackDrive  = leftBack;
@@ -58,7 +59,60 @@ public class MecanumMathOps {
         //this.lift = lift;
 
         this.telemetry = telemetry;
-        this.mover = mover;
+        this.redSkyStone = redSkyStone;
+
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+
+    }
+
+    public MecanumMathOps(Blue_SkystoneMover_LinearOpMode blueSkyStone, DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack, Telemetry telemetry){
+        this.leftFrontDrive = leftFront;
+        this.rightFrontDrive = rightFront;
+        this.leftBackDrive  = leftBack;
+        this.rightBackDrive = rightBack;
+        //this.lift = lift;
+
+        this.telemetry = telemetry;
+        this.blueSkyStone = blueSkyStone;
+
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+
+    }
+
+    public MecanumMathOps(Blue_FoundationMover_LinearOpMode blueFoundation, DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack, DcMotor liftVertical, DcMotor liftAngle, Telemetry telemetry){
+        this.leftFrontDrive = leftFront;
+        this.rightFrontDrive = rightFront;
+        this.leftBackDrive  = leftBack;
+        this.rightBackDrive = rightBack;
+        this.liftAngle = liftAngle;
+        this.liftVertical = liftVertical;
+
+        this.telemetry = telemetry;
+        this.blueFoundation = blueFoundation;
+
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+
+    }
+
+    public MecanumMathOps(Red_FoundationMover_LinearOpMode redFoundation, DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack, DcMotor liftVertical, DcMotor liftAngle, Telemetry telemetry){
+        this.leftFrontDrive = leftFront;
+        this.rightFrontDrive = rightFront;
+        this.leftBackDrive  = leftBack;
+        this.rightBackDrive = rightBack;
+        this.liftAngle = liftAngle;
+        this.liftVertical = liftVertical;
+
+        this.telemetry = telemetry;
+        this.redFoundation = redFoundation;
 
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -180,8 +234,6 @@ public class MecanumMathOps {
 
         liftAngle.setPower(0);
 
-
-
         liftAngle.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftAngle.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -218,22 +270,35 @@ public class MecanumMathOps {
     public void moveLiftAngle(double angle) {
         double tolerance = 20;
         double target =  angle* LIFT_TICKS_PER_REVOLUTION / 360 ;
-        double speed = 0;
+        double speed;
+
+        telemetry.addData("Lift Angle Motor","Run type:" + liftAngle.getMode());
         if (Math.abs(liftAngle.getCurrentPosition() - target) < tolerance){
             telemetry.addData("Lift Angle Motor","WIthin range " + liftAngle.getCurrentPosition() + " TARGET: " + target);
             return;
         }
 
         if (liftAngle.getCurrentPosition() < target) {
-            speed = 0.5;
+            speed = Math.min (1, (target - liftAngle.getCurrentPosition())/LIFT_TICKS_PER_REVOLUTION);
             telemetry.addData("Lift Angle Motor","LESS THAN TARGET: " + liftAngle.getCurrentPosition() + " TARGET: " + target);
-        } else {
-            speed = -0.5;
-        telemetry.addData("Lift Angle Motor","GREATER THAN TARGET: " + liftAngle.getCurrentPosition() + " TARGET: " + target);
+            if (speed < 0.05) {
 
+                speed = 0.05;
+
+            }
+
+        } else {
+            speed = Math.max(-1,(target - liftAngle.getCurrentPosition())/LIFT_TICKS_PER_REVOLUTION);
+            telemetry.addData("Lift Angle Motor","GREATER THAN TARGET: " + liftAngle.getCurrentPosition() + " TARGET: " + target);
+            if (speed > -0.05) {
+
+                speed = -0.05;
+
+            }
         }
 
         this.liftAngle.setPower(speed);
+
 
 
     }
@@ -336,7 +401,8 @@ public class MecanumMathOps {
                 Math.abs(rfTrgt-rfStrt) +
                 Math.abs(lfTrgt-lfStrt)+
                 Math.abs(lbTrgt-lbStrt)))
-        && mover.opModeIsActive()) {
+        && (blueFoundation.opModeIsActive() || redFoundation.opModeIsActive()
+        || blueSkyStone.opModeIsActive() || redSkyStone.opModeIsActive())) {
             scalar = 1/Math.hypot(x,y);
             this.flPower = (x + y)*scalar;
             this.frPower = (- x + y)*scalar;
