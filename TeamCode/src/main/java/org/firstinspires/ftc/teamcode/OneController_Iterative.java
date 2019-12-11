@@ -63,8 +63,8 @@ public class OneController_Iterative extends OpMode
     private DcMotor liftAngle;
     private Servo pincher;
     //private Servo outerPincher;
-    private Servo clamper1;
-    private Servo clamper2;
+    //private Servo clamper1;
+    //private Servo clamper2;
     private Servo foundationMech;
 
     private MecanumMathOps mathOps;
@@ -80,8 +80,6 @@ public class OneController_Iterative extends OpMode
     //if the left bumper was pressed last frame
     private boolean leftBumperPressed = false;
     private boolean rightBumperPressed = false;
-    private boolean aPrevPressed = false;
-    private boolean bPrevPressed = false;
 
     private double lift;
 
@@ -105,8 +103,6 @@ public class OneController_Iterative extends OpMode
         pincher = hardwareMap.get(Servo.class, "pincher");
 
         driveMode = false;
-
-        double lift;
 
         clampPosition = MIN_POSITION;
         pincherPosition = MAX_POSITION;
@@ -260,7 +256,7 @@ public class OneController_Iterative extends OpMode
 */
         //mathOps.moveLiftAngle(this.liftAngleTarget);
 
-        this.aPrevPressed = gamepad2.a;
+        //this.aPrevPressed = gamepad2.a;
 
         if (gamepad2.right_bumper && ! this.rightBumperPressed) {
 

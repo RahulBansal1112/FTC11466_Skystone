@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.robocol.RobocolParsable;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -49,7 +47,8 @@ public class MecanumMathOps {
     private double pLiftPower = 0;
 
     private SkystoneMover_LinearOpMode mover;
-    private FoundationMover_LinearOpMode foundation;
+    private Blue_FoundationMover_LinearOpMode blueFoundation;
+    private Red_FoundationMover_LinearOpMode redFoundation;
 
     public MecanumMathOps(SkystoneMover_LinearOpMode mover, DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack, Telemetry telemetry){
         this.leftFrontDrive = leftFront;
@@ -68,15 +67,34 @@ public class MecanumMathOps {
 
     }
 
-    public MecanumMathOps(FoundationMover_LinearOpMode foundation, DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack, Telemetry telemetry){
+    public MecanumMathOps(Blue_FoundationMover_LinearOpMode blueFoundation, DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack, DcMotor liftVertical, DcMotor liftAngle, Telemetry telemetry){
         this.leftFrontDrive = leftFront;
         this.rightFrontDrive = rightFront;
         this.leftBackDrive  = leftBack;
         this.rightBackDrive = rightBack;
-        //this.lift = lift;
+        this.liftAngle = liftAngle;
+        this.liftVertical = liftVertical;
 
         this.telemetry = telemetry;
-        this.foundation = foundation;
+        this.blueFoundation = blueFoundation;
+
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+
+    }
+
+    public MecanumMathOps(Red_FoundationMover_LinearOpMode redFoundation, DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack, DcMotor liftVertical, DcMotor liftAngle, Telemetry telemetry){
+        this.leftFrontDrive = leftFront;
+        this.rightFrontDrive = rightFront;
+        this.leftBackDrive  = leftBack;
+        this.rightBackDrive = rightBack;
+        this.liftAngle = liftAngle;
+        this.liftVertical = liftVertical;
+
+        this.telemetry = telemetry;
+        this.redFoundation = redFoundation;
 
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -365,7 +383,7 @@ public class MecanumMathOps {
                 Math.abs(rfTrgt-rfStrt) +
                 Math.abs(lfTrgt-lfStrt)+
                 Math.abs(lbTrgt-lbStrt)))
-        && (mover.opModeIsActive()|| foundation.opModeIsActive())) {
+        && (mover.opModeIsActive()|| blueFoundation.opModeIsActive() || redFoundation.opModeIsActive())) {
             scalar = 1/Math.hypot(x,y);
             this.flPower = (x + y)*scalar;
             this.frPower = (- x + y)*scalar;

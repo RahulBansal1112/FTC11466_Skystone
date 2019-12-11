@@ -50,8 +50,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="FoundationMover_LinearOpMode", group="Linear Opmode")
-public class FoundationMover_LinearOpMode extends LinearOpMode {
+@Autonomous(name="Red_FoundationMover_LinearOpMode", group="Linear Opmode")
+public class Red_FoundationMover_LinearOpMode extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -59,11 +59,16 @@ public class FoundationMover_LinearOpMode extends LinearOpMode {
     private DcMotor rightFrontDrive;
     private DcMotor leftBackDrive;
     private DcMotor rightBackDrive;
-    private DcMotor liftMotor;
-    private Servo innerPincher;
-    private Servo outerPincher;
-    private Servo clamper1;
-    private Servo clamper2;
+    private DcMotor liftVertical;
+    private DcMotor liftAngle;
+    private Servo pincher;
+    private Servo foundationMech;
+
+    private double clampPosition;
+    private double pincherPosition;
+    private static final double MAX_POSITION = 1;
+    private static final double MIN_POSITION = 0;
+    private static final double MIN_PINCHER_POSITION = 0.7;
 
     @Override
 
@@ -81,6 +86,10 @@ public class FoundationMover_LinearOpMode extends LinearOpMode {
         leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class,"right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class,"right_back_drive");
+        foundationMech = hardwareMap.get(Servo.class, "foundation_mech");
+        pincher = hardwareMap.get(Servo.class, "pincher");
+        liftVertical = hardwareMap.get(DcMotor.class, "lift_vertical");
+        liftAngle = hardwareMap.get(DcMotor.class, "lift_angle");
 
         //liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
 
@@ -94,7 +103,13 @@ public class FoundationMover_LinearOpMode extends LinearOpMode {
         outerPincher = hardwareMap.get(Servo.class, "outerPincher");
         */
 
-        MecanumMathOps mathOps = new MecanumMathOps(this, leftFrontDrive,leftBackDrive,rightFrontDrive,rightBackDrive,telemetry);
+        MecanumMathOps mathOps = new MecanumMathOps(this, leftFrontDrive,leftBackDrive,rightFrontDrive,rightBackDrive, liftVertical, liftAngle, telemetry);
+
+        clampPosition = MIN_POSITION;
+        pincherPosition = MAX_POSITION;
+
+        mathOps.initLift(); //Assume the lift is all the way down.
+        mathOps.initAngle(); //Assume the lift is straight up.
 
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -142,10 +157,24 @@ public class FoundationMover_LinearOpMode extends LinearOpMode {
         //mathOps.updatePowers();
 
         //sleep(1000);
-        mathOps.moveInches(31.25, 0, -1);
+        //move to foundation
+        mathOps.moveInches(31, 0, -1);
         mathOps.strafeAndTurn(0, 0, 0);
         mathOps.updatePowers();
-        sleep(1000);
+        //hook on foundation
+        foundationMech.setPosition(MAX_POSITION);
+        //move foundation back
+        mathOps.moveInches(31, 0, 1);
+        mathOps.strafeAndTurn(0, 0, 0);
+        mathOps.updatePowers();
+        //release foundation
+        foundationMech.setPosition(MIN_POSITION);
+        //move to midfield tape
+        mathOps.moveInches(53, 1, 0);
+        mathOps.strafeAndTurn(0, 0, 0);
+        mathOps.updatePowers();
+        //expand on this if we have time left over.
+
         /*mathOps.moveInches(12, 0, -1);
         mathOps.strafeAndTurn(0,0,0);
         mathOps.updatePowers();
@@ -196,7 +225,7 @@ public class FoundationMover_LinearOpMode extends LinearOpMode {
                 "right back(%.2f), right front(%.2f)", leftBackPower, leftFrontPower, rightBackPower, rightFrontPower);
         telemetry.update();
     }
-
+/*
     private void switchClampPosition(){
         if (this.clamper1.getPosition() < 90 && this.clamper2.getPosition() < 90) {//OPen?
             this.clamper1.setPosition(180);//closed?
@@ -223,4 +252,5 @@ public class FoundationMover_LinearOpMode extends LinearOpMode {
             outerPincher.setPosition(90);
         }
     }
+    */
 }
