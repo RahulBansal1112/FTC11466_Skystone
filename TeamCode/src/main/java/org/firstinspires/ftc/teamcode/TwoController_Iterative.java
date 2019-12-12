@@ -76,10 +76,11 @@ public class TwoController_Iterative extends OpMode
     private static final double MIN_POSITION = 0;
     private static final double MIN_PINCHER_POSITION = 0.7;
     private static final double MIN_LIFT_ANGLE = 0;
-    private static final double MAX_LIFT_ANGLE = 45;
+    private static final double MAX_LIFT_ANGLE = 55;
     //if the left bumper was pressed last frame
     private boolean leftBumperPressed = false;
     private boolean rightBumperPressed = false;
+    private boolean aPrevPressed = false;
 
     private double lift;
 
@@ -233,7 +234,7 @@ public class TwoController_Iterative extends OpMode
         }
         leftBumperPressed = gamepad2.left_bumper; //this loops back around to check if it's been pressed previously
 
-        /*
+
         if (gamepad2.a && ! this.aPrevPressed) {
             double mintarget = MIN_POSITION * MecanumMathOps.LIFT_TICKS_PER_REVOLUTION / 360;
             double maxtarget = MAX_POSITION * MecanumMathOps.LIFT_TICKS_PER_REVOLUTION / 360;
@@ -245,8 +246,8 @@ public class TwoController_Iterative extends OpMode
             }
 
         }
-        */
-        liftAngle.setPower(gamepad2.left_stick_x * 0.15);
+
+        //liftAngle.setPower(gamepad2.left_stick_x * 0.15);
 
         /*
         if (gamepad2.b && this.bPrevPressed) {
@@ -257,9 +258,9 @@ public class TwoController_Iterative extends OpMode
 
         bPrevPressed = gamepad2.b;
 */
-        //mathOps.moveLiftAngle(this.liftAngleTarget);
+        mathOps.moveLiftAngle(this.liftAngleTarget);
 
-        //this.aPrevPressed = gamepad2.a;
+        this.aPrevPressed = gamepad2.a;
 
         if (gamepad2.right_bumper && ! this.rightBumperPressed) {
 
