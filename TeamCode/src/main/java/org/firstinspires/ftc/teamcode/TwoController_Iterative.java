@@ -153,8 +153,11 @@ public class TwoController_Iterative extends OpMode
     @Override
     public void loop() {
 
-        double lift = getLift();
+        double lift = getLift(); //getLift gets the joystick y, just setting it to a variable here
         mathOps.strafeAndTurn(gamepad1.left_stick_x,-gamepad1.left_stick_y, gamepad1.right_stick_x);
+
+        //need to program it to stop if we get too far
+
         if (lift < 0) {
 
             mathOps.moveLiftDown(Math.abs(lift));
@@ -210,7 +213,7 @@ public class TwoController_Iterative extends OpMode
 
 
         if (gamepad1.x) {
-            changeDriveMode();
+            changeDriveMode(); //drivemode is for acceleration. probably not going to use this
         }
 
         if (gamepad2.left_bumper && ! this.leftBumperPressed) {
@@ -228,7 +231,7 @@ public class TwoController_Iterative extends OpMode
         }else {
             telemetry.addData("Foundation:",false);
         }
-        leftBumperPressed = gamepad2.left_bumper;
+        leftBumperPressed = gamepad2.left_bumper; //this loops back around to check if it's been pressed previously
 
         /*
         if (gamepad2.a && ! this.aPrevPressed) {
@@ -274,9 +277,7 @@ public class TwoController_Iterative extends OpMode
             telemetry.addData("Pincher:",false);
         }
 
-
-
-        rightBumperPressed = gamepad1.right_bumper;
+        rightBumperPressed = gamepad2.right_bumper;
 
 
 
