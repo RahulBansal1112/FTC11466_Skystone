@@ -76,10 +76,11 @@ public class TwoController_Iterative extends OpMode
     private static final double MIN_POSITION = 0;
     private static final double MIN_PINCHER_POSITION = 0.7;
     private static final double MIN_LIFT_ANGLE = 0;
-    private static final double MAX_LIFT_ANGLE = 45;
+    private static final double MAX_LIFT_ANGLE = 65;
     //if the left bumper was pressed last frame
     private boolean leftBumperPressed = false;
     private boolean rightBumperPressed = false;
+    private boolean aPrevPressed = false;
 
     private double lift;
 
@@ -153,8 +154,11 @@ public class TwoController_Iterative extends OpMode
     @Override
     public void loop() {
 
-        double lift = getLift();
+        double lift = getLift(); //getLift gets the joystick y, just setting it to a variable here
         mathOps.strafeAndTurn(gamepad1.left_stick_x,-gamepad1.left_stick_y, gamepad1.right_stick_x);
+
+        //need to program it to stop if we get too far
+
         if (lift < 0) {
 
             mathOps.moveLiftDown(Math.abs(lift));
@@ -210,7 +214,7 @@ public class TwoController_Iterative extends OpMode
 
 
         if (gamepad1.x) {
-            changeDriveMode();
+            changeDriveMode(); //drivemode is for acceleration. probably not going to use this
         }
 
         if (gamepad2.left_bumper && ! this.leftBumperPressed) {
@@ -228,22 +232,23 @@ public class TwoController_Iterative extends OpMode
         }else {
             telemetry.addData("Foundation:",false);
         }
-        leftBumperPressed = gamepad2.left_bumper;
+        leftBumperPressed = gamepad2.left_bumper; //this loops back around to check if it's been pressed previously
 
-        /*
-        if (gamepad2.a && ! this.aPrevPressed) {
+
+        if (gamepad2.left_stick_button && ! this.aPrevPressed) {
             double mintarget = MIN_POSITION * MecanumMathOps.LIFT_TICKS_PER_REVOLUTION / 360;
             double maxtarget = MAX_POSITION * MecanumMathOps.LIFT_TICKS_PER_REVOLUTION / 360;
 
-            if (Math.abs(maxtarget) > Math.abs(mintarget)){
+            if (Math.abs(maxtarget - liftAngle.getCurrentPosition()) > Math.abs(mintarget-liftAngle.getCurrentPosition())){
                 this.liftAngleTarget = MAX_LIFT_ANGLE;
             } else {
                 this.liftAngleTarget = MIN_LIFT_ANGLE;
             }
+            telemetry.addData("A PRESSED", " A PRESSED");
 
         }
-        */
-        liftAngle.setPower(gamepad2.left_stick_x * 0.15);
+
+        //liftAngle.setPower(gamepad2.left_stick_x * 0.15);
 
         /*
         if (gamepad2.b && this.bPrevPressed) {
@@ -254,9 +259,8 @@ public class TwoController_Iterative extends OpMode
 
         bPrevPressed = gamepad2.b;
 */
-        //mathOps.moveLiftAngle(this.liftAngleTarget);
-
-        //this.aPrevPressed = gamepad2.a;
+       mathOps.moveLiftAngle(this.liftAngleTarget);
+       this.aPrevPressed = gamepad2.left_stick_button;
 
         if (gamepad2.right_bumper && ! this.rightBumperPressed) {
 
@@ -274,9 +278,7 @@ public class TwoController_Iterative extends OpMode
             telemetry.addData("Pincher:",false);
         }
 
-
-
-        rightBumperPressed = gamepad1.right_bumper;
+        rightBumperPressed = gamepad2.right_bumper;
 
 
 

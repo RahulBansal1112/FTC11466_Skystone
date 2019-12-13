@@ -268,13 +268,14 @@ public class MecanumMathOps {
     }
 
     public void moveLiftAngle(double angle) {
-        double tolerance = 20;
+        double tolerance = 10;
         double target =  angle* LIFT_TICKS_PER_REVOLUTION / 360 ;
         double speed;
 
         telemetry.addData("Lift Angle Motor","Run type:" + liftAngle.getMode());
         if (Math.abs(liftAngle.getCurrentPosition() - target) < tolerance){
             telemetry.addData("Lift Angle Motor","WIthin range " + liftAngle.getCurrentPosition() + " TARGET: " + target);
+            liftAngle.setPower(0);
             return;
         }
 
