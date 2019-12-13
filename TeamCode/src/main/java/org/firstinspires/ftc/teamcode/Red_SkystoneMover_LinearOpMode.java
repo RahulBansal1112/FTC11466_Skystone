@@ -108,8 +108,10 @@ public class Red_SkystoneMover_LinearOpMode extends LinearOpMode {
         clampPosition = MIN_POSITION;
         pincherPosition = MAX_POSITION; //make sure this is open or closed?
 
+
         mathOps.initLift(); //Assume the lift is all the way down.
         mathOps.initAngle(); //Assume the lift is straight up.
+        mathOps.moveLiftAngle(90); //Set angle to 90 degrees(vertical).
 
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

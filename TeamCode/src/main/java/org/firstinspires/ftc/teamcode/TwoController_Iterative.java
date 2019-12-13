@@ -281,7 +281,6 @@ public class TwoController_Iterative extends OpMode
         rightBumperPressed = gamepad2.right_bumper;
 
 
-
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString()+ " " + gamepad1.left_stick_x + " " + gamepad1.left_stick_y);
         telemetry.addData("Motors Turning", "turn(%.2f)", gamepad1.right_stick_x);
