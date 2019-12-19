@@ -158,19 +158,19 @@ public class Red_FoundationMover_LinearOpMode extends LinearOpMode {
 
         //sleep(1000);
         //move to foundation
-        mathOps.moveInches(31, 0, -1);
+        mathOps.moveInches(32, 0, -1);
         mathOps.strafeAndTurn(0, 0, 0);
         mathOps.updatePowers();
         //hook on foundation
         foundationMech.setPosition(MAX_POSITION);
         //move foundation back
-        mathOps.moveInches(31, 0, 1);
+        mathOps.moveInches(32, 0, 1);
         mathOps.strafeAndTurn(0, 0, 0);
         mathOps.updatePowers();
         //release foundation
         foundationMech.setPosition(MIN_POSITION);
         //move to midfield tape
-        mathOps.moveInches(53, 1, 0);
+        mathOps.moveInches(72, 1, 0);
         mathOps.strafeAndTurn(0, 0, 0);
         mathOps.updatePowers();
         //expand on this if we have time left over.

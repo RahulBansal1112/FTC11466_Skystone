@@ -300,8 +300,6 @@ public class MecanumMathOps {
 
         this.liftAngle.setPower(speed);
 
-
-
     }
 
     private double maxAbsValue(double a, double b, double c, double  d){
