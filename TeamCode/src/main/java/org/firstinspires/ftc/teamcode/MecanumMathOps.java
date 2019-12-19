@@ -192,6 +192,7 @@ public class MecanumMathOps {
     }
 
     public void strafeAndTurn(double x,double y,double r){
+
         this.flPower = x + y + r;
         this.frPower = - x + y - r;
         this.blPower = - x + y + r;
@@ -282,18 +283,18 @@ public class MecanumMathOps {
         if (liftAngle.getCurrentPosition() < target) {
             speed = Math.min (1, (target - liftAngle.getCurrentPosition())/LIFT_TICKS_PER_REVOLUTION);
             telemetry.addData("Lift Angle Motor","LESS THAN TARGET: " + liftAngle.getCurrentPosition() + " TARGET: " + target);
-            if (speed < 0.05) {
+            if (speed < 0.1) {
 
-                speed = 0.05;
+                speed = 0.1;
 
             }
 
         } else {
             speed = Math.max(-1,(target - liftAngle.getCurrentPosition())/LIFT_TICKS_PER_REVOLUTION);
             telemetry.addData("Lift Angle Motor","GREATER THAN TARGET: " + liftAngle.getCurrentPosition() + " TARGET: " + target);
-            if (speed > -0.05) {
+            if (speed > -0.1) {
 
-                speed = -0.05;
+                speed = -0.1;
 
             }
         }

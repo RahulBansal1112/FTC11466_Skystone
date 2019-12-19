@@ -162,13 +162,17 @@ public class Blue_FoundationMover_LinearOpMode extends LinearOpMode {
         mathOps.strafeAndTurn(0, 0, 0);
         mathOps.updatePowers();
         //hook on foundation
-        foundationMech.setPosition(MAX_POSITION);
+        while (Math.abs(foundationMech.getPosition() - MAX_POSITION) < 0.1) {
+            foundationMech.setPosition(MAX_POSITION);
+        }
         //move foundation back
         mathOps.moveInches(32, 0, 1);
         mathOps.strafeAndTurn(0, 0, 0);
         mathOps.updatePowers();
         //release foundation
-        foundationMech.setPosition(MIN_POSITION);
+        while (Math.abs(foundationMech.getPosition() - MIN_POSITION) < 0.1) {
+            foundationMech.setPosition(MIN_POSITION);
+        }
         //move to midfield tape
         mathOps.moveInches(72, -1, 0);
         mathOps.strafeAndTurn(0, 0, 0);

@@ -155,7 +155,12 @@ public class TwoController_Iterative extends OpMode
     public void loop() {
 
         double lift = getLift(); //getLift gets the joystick y, just setting it to a variable here
-        mathOps.strafeAndTurn(gamepad1.left_stick_x,-gamepad1.left_stick_y, gamepad1.right_stick_x);
+        if (Math.abs(gamepad1.left_stick_x) > Math.abs(gamepad1.left_stick_y)) {
+            mathOps.strafeAndTurn(gamepad1.left_stick_x, 0, gamepad1.right_stick_x);
+        }
+        else {
+            mathOps.strafeAndTurn(0, -gamepad1.left_stick_y, gamepad1.right_stick_x);
+        }
 
         //need to program it to stop if we get too far
 
